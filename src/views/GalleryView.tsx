@@ -75,16 +75,16 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id || (item as any)._id || `gallery-item-${idx}`}
-                onClick={() => setActiveLightboxItem(item)}
-                className="group relative rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 cursor-pointer shadow-2xs hover:shadow-xl transition-all duration-300"
+                onClick={() => item.image && setActiveLightboxItem(item)}
+                className={`group relative rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-2xs hover:shadow-xl transition-all duration-300 ${item.image ? 'cursor-pointer' : ''}`}
               >
                 <div className="aspect-4/3 w-full overflow-hidden">
-                  <img
+                  {item.image ? <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover object-center group-hover:scale-106 transition-transform duration-500"
                     loading="lazy"
-                  />
+                  /> : <div className="h-full w-full bg-slate-200" aria-hidden="true" />}
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5 text-white">
                   <span className="text-[10px] font-bold text-lime-400 uppercase tracking-wider font-mono">

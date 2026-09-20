@@ -606,7 +606,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     qualifications: "B.App.Sc (Physiotherapy), PostGrad Cert Continence & Pelvic Health",
     experienceYears: 10,
     specialization: ["Chronic Spinal Pain", "Pelvic Health & Postnatal Rehab", "Clinical Pilates", "Ergonomics"],
-    photo: "https://images.unsplash.com/photo-1594824813580-0a78619623e1?auto=format&fit=crop&w=600&q=80",
+    photo: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80",
     bio: "Sarah brings a compassionate, whole-person approach to treating complex back and pelvic conditions. She is passionate about empowering patients through reformer Pilates, movement retraining, and demystifying spinal pain with practical, evidence-based care.",
     ahpraNumber: "PHY0002194810",
     isDirector: false

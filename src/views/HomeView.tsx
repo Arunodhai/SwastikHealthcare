@@ -478,11 +478,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
 
               <div className="pt-6 mt-6 border-t border-slate-200/80 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={activeTestimonial?.avatar}
-                    alt={activeTestimonial?.name || ''}
+                  {activeTestimonial?.avatar ? <img
+                    src={activeTestimonial.avatar}
+                    alt={activeTestimonial.name}
                     className="w-11 h-11 rounded-full object-cover border border-emerald-400"
-                  />
+                  /> : <div className="w-11 h-11 rounded-full bg-emerald-100 border border-emerald-300" aria-hidden="true" />}
                   <div>
                     <h4 className="text-sm font-bold text-[#0f2330] font-heading leading-tight">
                       {activeTestimonial?.name}
@@ -544,11 +544,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                       key={therapist.id || (therapist as any)._id || `therapist-${idx}`}
                       className="bg-slate-50/50 rounded-2xl border border-slate-200/80 p-3.5 text-center flex flex-col items-center hover:border-emerald-300 hover:shadow-sm transition-all"
                     >
-                      <img
+                      {therapist.photo ? <img
                         src={therapist.photo}
                         alt={therapist.name}
                         className="w-24 h-24 rounded-full object-cover border-2 border-white shadow-sm mb-3"
-                      />
+                      /> : <div className="w-24 h-24 rounded-full bg-slate-200 border-2 border-white shadow-sm mb-3" aria-hidden="true" />}
                       <h4 className="text-sm font-bold text-[#0f2330] font-heading leading-tight">
                         {therapist.name}
                       </h4>

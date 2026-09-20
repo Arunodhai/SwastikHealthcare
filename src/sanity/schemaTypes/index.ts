@@ -193,6 +193,7 @@ export const testimonialSchema = {
     { name: 'rating', title: 'Rating (out of 5)', type: 'number', initialValue: 5 },
     { name: 'review', title: 'Testimonial Review', type: 'text', rows: 4, validation: (Rule: any) => Rule.required() },
     { name: 'verified', title: 'Verified Patient / Review', type: 'boolean', initialValue: true },
+    { name: 'avatar', title: 'Patient Photo / Avatar', type: 'image', options: { hotspot: true } },
     { name: 'location', title: 'Location / Suburb', type: 'string' },
     { name: 'order', title: 'Display Order', type: 'number', initialValue: 1 },
   ],

@@ -170,11 +170,11 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
             {galleryItems.slice(0, 3).map((item) => (
               <div key={item.id} className="group rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xs">
                 <div className="relative h-56 overflow-hidden">
-                  <img
+                  {item.image ? <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                  /> : <div className="h-full w-full bg-slate-200" aria-hidden="true" />}
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold text-sm text-[#0f2330] font-heading">{item.title}</h3>

@@ -13,12 +13,16 @@ export const TeamCard: React.FC<TeamCardProps> = ({ member, onBook }) => {
     <div className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden hover:shadow-xl hover:border-emerald-300 transition-all duration-300 flex flex-col group">
       {/* Photo Container */}
       <div className="relative aspect-4/5 w-full bg-slate-100 overflow-hidden">
-        <img
-          src={member.photo}
-          alt={member.name}
-          className="w-full h-full object-cover object-top group-hover:scale-104 transition-transform duration-500"
-          loading="lazy"
-        />
+        {member.photo ? (
+          <img
+            src={member.photo}
+            alt={member.name}
+            className="w-full h-full object-cover object-top group-hover:scale-104 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="h-full w-full bg-slate-200" aria-hidden="true" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
         {/* Member tags overlay */}
         <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold text-slate-800 shadow-sm flex items-center gap-1">

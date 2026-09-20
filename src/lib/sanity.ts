@@ -193,6 +193,7 @@ export async function fetchSanityClinicData() {
       result.testimonials = sanityTestimonials.map((t: any, idx: number) => ({
           ...t,
           id: t._id || t.id || `testimonial-${idx}`,
+          avatar: t.avatar?.asset ? urlFor(t.avatar).auto('format').width(300).height(300).fit('crop').url() : undefined,
         }));
 
       result.galleryItems = sanityGallery.map((g: any, idx: number) => ({
