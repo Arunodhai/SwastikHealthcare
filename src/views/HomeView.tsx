@@ -133,9 +133,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl space-y-6 py-4 sm:py-8 lg:py-12">
             
-            {isLoading ? (
-              <div className="h-6 w-64 max-w-full rounded bg-slate-200 animate-pulse" aria-label="Loading hero content" />
-            ) : heroEyebrow ? (
+            {heroEyebrow ? (
               <div className="inline-flex items-center gap-2.5 text-[#0b2341] text-xs sm:text-sm font-bold tracking-wide">
                 <SwastikEmblem className="w-6 h-6 rounded-full shadow-xs" />
                 <span className="flex items-center gap-2">
@@ -145,24 +143,19 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               </div>
             ) : null}
 
-            {isLoading ? (
-              <div className="space-y-3" aria-hidden="true">
-                <div className="h-12 sm:h-14 w-full rounded bg-slate-200 animate-pulse" />
-                <div className="h-12 sm:h-14 w-4/5 rounded bg-slate-200 animate-pulse" />
-              </div>
-            ) : heroTitle ? (
+            {heroTitle ? (
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0f2330] font-heading leading-[1.08]">
                 {heroTitle}
               </h1>
             ) : null}
 
-            {!isLoading && heroSubtitle && (
+            {heroSubtitle && (
               <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
                 {heroSubtitle}
               </p>
             )}
 
-            {!isLoading && (heroPrimaryCtaLabel || heroSecondaryCtaLabel) && <div className="flex flex-wrap items-center gap-4 pt-2">
+            {(heroPrimaryCtaLabel || heroSecondaryCtaLabel) && <div className="flex flex-wrap items-center gap-4 pt-2">
               {heroPrimaryCtaLabel && (
               <button
                 id="hero-book-btn"
@@ -186,7 +179,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               )}
             </div>}
 
-            {!isLoading && (hasHeroBadge1 || hasHeroBadge2) && (
+            {(hasHeroBadge1 || hasHeroBadge2) && (
             <div className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center gap-6 text-xs text-slate-600">
               {hasHeroBadge1 && <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-emerald-100/80 flex items-center justify-center text-emerald-700">

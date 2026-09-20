@@ -148,21 +148,19 @@ export async function fetchSanityClinicData() {
         result.settings = {
           ...DEFAULT_CLINIC_SETTINGS,
           ...sanitySettings,
-          // Hero fields intentionally do not inherit local defaults. Once the
-          // settings document exists, Sanity is the sole source for hero copy.
-          heroEyebrow: typeof sanitySettings.heroEyebrow === 'string' ? sanitySettings.heroEyebrow : undefined,
-          heroTitle: typeof sanitySettings.heroTitle === 'string' ? sanitySettings.heroTitle : undefined,
-          heroSubtitle: typeof sanitySettings.heroSubtitle === 'string' ? sanitySettings.heroSubtitle : undefined,
-          heroImageAlt: typeof sanitySettings.heroImageAlt === 'string' ? sanitySettings.heroImageAlt : undefined,
-          heroPrimaryCtaLabel: typeof sanitySettings.heroPrimaryCtaLabel === 'string' ? sanitySettings.heroPrimaryCtaLabel : undefined,
-          heroSecondaryCtaLabel: typeof sanitySettings.heroSecondaryCtaLabel === 'string' ? sanitySettings.heroSecondaryCtaLabel : undefined,
-          heroBadge1Title: typeof sanitySettings.heroBadge1Title === 'string' ? sanitySettings.heroBadge1Title : undefined,
-          heroBadge1Subtitle: typeof sanitySettings.heroBadge1Subtitle === 'string' ? sanitySettings.heroBadge1Subtitle : undefined,
-          heroBadge2Title: typeof sanitySettings.heroBadge2Title === 'string' ? sanitySettings.heroBadge2Title : undefined,
-          heroBadge2Subtitle: typeof sanitySettings.heroBadge2Subtitle === 'string' ? sanitySettings.heroBadge2Subtitle : undefined,
+          heroEyebrow: (typeof sanitySettings.heroEyebrow === 'string' && sanitySettings.heroEyebrow.trim()) || DEFAULT_CLINIC_SETTINGS.heroEyebrow,
+          heroTitle: (typeof sanitySettings.heroTitle === 'string' && sanitySettings.heroTitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroTitle,
+          heroSubtitle: (typeof sanitySettings.heroSubtitle === 'string' && sanitySettings.heroSubtitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroSubtitle,
+          heroImageAlt: (typeof sanitySettings.heroImageAlt === 'string' && sanitySettings.heroImageAlt.trim()) || DEFAULT_CLINIC_SETTINGS.heroImageAlt,
+          heroPrimaryCtaLabel: (typeof sanitySettings.heroPrimaryCtaLabel === 'string' && sanitySettings.heroPrimaryCtaLabel.trim()) || DEFAULT_CLINIC_SETTINGS.heroPrimaryCtaLabel,
+          heroSecondaryCtaLabel: (typeof sanitySettings.heroSecondaryCtaLabel === 'string' && sanitySettings.heroSecondaryCtaLabel.trim()) || DEFAULT_CLINIC_SETTINGS.heroSecondaryCtaLabel,
+          heroBadge1Title: (typeof sanitySettings.heroBadge1Title === 'string' && sanitySettings.heroBadge1Title.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge1Title,
+          heroBadge1Subtitle: (typeof sanitySettings.heroBadge1Subtitle === 'string' && sanitySettings.heroBadge1Subtitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge1Subtitle,
+          heroBadge2Title: (typeof sanitySettings.heroBadge2Title === 'string' && sanitySettings.heroBadge2Title.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge2Title,
+          heroBadge2Subtitle: (typeof sanitySettings.heroBadge2Subtitle === 'string' && sanitySettings.heroBadge2Subtitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge2Subtitle,
           heroBgImage: sanitySettings.heroBgImage?.asset
             ? urlFor(sanitySettings.heroBgImage).auto('format').width(1800).url()
-            : undefined,
+            : DEFAULT_CLINIC_SETTINGS.heroBgImage,
           consultationImage: sanitySettings.consultationImage?.asset
             ? urlFor(sanitySettings.consultationImage).auto('format').width(1200).url()
             : sanitySettings.consultationImage,
