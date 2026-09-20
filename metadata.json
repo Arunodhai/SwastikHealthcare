@@ -1,0 +1,6 @@
+{
+  "name": "Swastik Healthcare",
+  "description": "Swastik Healthcare - Physiotherapy & Rehabilitation Clinic (Since 2009). Evidence-based rehabilitation, sports injury recovery, pain relief, and personalized mobility programs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
