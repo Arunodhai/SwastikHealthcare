@@ -307,7 +307,7 @@ export async function seedSanityDataset(token: string) {
     name: DEFAULT_CLINIC_SETTINGS.name,
     tagline: DEFAULT_CLINIC_SETTINGS.tagline,
     foundedYear: '2009',
-    heroEyebrow: 'Swastik Healthcare • Trusted Care Since 2009',
+    heroEyebrow: 'Trusted Care Since 2009',
     heroTitle: 'Restore Mobility, Recover Faster & Live Pain Free Again',
     heroSubtitle: 'Comprehensive physiotherapy & physical rehabilitation from post-surgery recovery and mobility aids to independent movement and peak functional strength.',
     phone: DEFAULT_CLINIC_SETTINGS.phone,

@@ -7,7 +7,7 @@ export const CLINIC_SETTINGS: ClinicSettings = {
   phoneRaw: "+611300123456",
   email: "info@swastikhealthcare.com",
   foundedYear: "2009",
-  heroEyebrow: "Swastik Healthcare • Trusted Care Since 2009",
+  heroEyebrow: "Trusted Care Since 2009",
   heroTitle: "Restore Mobility, Recover Faster & Live Pain Free Again",
   heroSubtitle: "Comprehensive physiotherapy & physical rehabilitation from post-surgery recovery and mobility aids to independent movement and peak functional strength.",
   heroPrimaryCtaLabel: "Book an Appointment",

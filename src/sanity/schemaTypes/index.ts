@@ -365,7 +365,7 @@ export const clinicSettingsSchema = {
     { name: 'foundedYear', title: 'Founded Year', type: 'string', initialValue: '2009' },
     
     // --- Hero Section ---
-    { name: 'heroEyebrow', title: 'Hero Eyebrow Badge', type: 'string', initialValue: 'Swastik Healthcare • Trusted Care Since 2009' },
+    { name: 'heroEyebrow', title: 'Hero Eyebrow Text', type: 'string', initialValue: 'Trusted Care Since 2009' },
     { name: 'heroTitle', title: 'Hero Main Headline', type: 'string', initialValue: 'Restore Mobility, Recover Faster & Live Pain Free Again' },
     { name: 'heroSubtitle', title: 'Hero Subtitle', type: 'text', rows: 3, initialValue: 'Comprehensive physiotherapy & physical rehabilitation from post-surgery recovery and mobility aids to independent movement and peak functional strength.' },
     { name: 'heroBgImage', title: 'Hero Background Image', type: 'image', options: { hotspot: true } },

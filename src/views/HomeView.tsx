@@ -25,7 +25,6 @@ import { useClinic } from '../context/ClinicContext';
 import { SectionHeading } from '../components/SectionHeading';
 import { TreatmentCard } from '../components/TreatmentCard';
 import { ConditionCard } from '../components/ConditionCard';
-import { SwastikEmblem } from '../components/SwastikLogo';
 
 const iconLookup: Record<string, React.ComponentType<{ className?: string }>> = {
   GraduationCap,
@@ -99,6 +98,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
 
   const heroBgImage = settings.heroBgImage?.trim();
   const heroEyebrow = settings.heroEyebrow?.trim();
+  const heroEyebrowText = heroEyebrow?.split('•').pop()?.trim() || heroEyebrow;
   const heroTitle = settings.heroTitle?.trim();
   const heroSubtitle = settings.heroSubtitle?.trim();
   const heroImageAlt = settings.heroImageAlt?.trim() || '';
@@ -126,13 +126,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl space-y-5 py-1 sm:space-y-6 sm:py-8 lg:py-12">
             
-            {heroEyebrow ? (
-              <div className="inline-flex items-center gap-2.5 text-[#0b2341] text-xs sm:text-sm font-bold tracking-wide">
-                <SwastikEmblem className="w-6 h-6 rounded-full shadow-xs" />
-                <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>{heroEyebrow}</span>
-                </span>
+            {heroEyebrowText ? (
+              <div className="text-[#0b2341] text-xs sm:text-sm font-bold tracking-wide">
+                {heroEyebrowText}
               </div>
             ) : null}
 
