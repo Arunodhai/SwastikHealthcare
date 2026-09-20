@@ -25,8 +25,12 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
   const { conditions, treatments, settings, isLoading } = useClinic();
   const condition = conditions.find((item) => item.slug === slug);
 
-  if (isLoading) {
-    return <div className="min-h-[60vh] bg-white" aria-label="Loading condition" />;
+  if (isLoading && !condition) {
+    return (
+      <div className="min-h-[60vh] bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+      </div>
+    );
   }
 
   if (!condition) {

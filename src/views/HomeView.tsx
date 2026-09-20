@@ -74,10 +74,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     isLoading,
   } = useClinic();
 
-  const treatments = clinicTreatments || FALLBACK_TREATMENTS;
-  const conditions = clinicConditions || FALLBACK_CONDITIONS;
-  const teamMembers = clinicTeamMembers || FALLBACK_TEAM_MEMBERS;
-  const testimonials = clinicTestimonials || FALLBACK_TESTIMONIALS;
+  const treatments = (clinicTreatments && clinicTreatments.length > 0) ? clinicTreatments : FALLBACK_TREATMENTS;
+  const conditions = (clinicConditions && clinicConditions.length > 0) ? clinicConditions : FALLBACK_CONDITIONS;
+  const teamMembers = (clinicTeamMembers && clinicTeamMembers.length > 0) ? clinicTeamMembers : FALLBACK_TEAM_MEMBERS;
+  const testimonials = (clinicTestimonials && clinicTestimonials.length > 0) ? clinicTestimonials : FALLBACK_TESTIMONIALS;
   const settings = clinicSettings || FALLBACK_SETTINGS;
   const locations = (clinicLocations && clinicLocations.length > 0) ? clinicLocations : FALLBACK_LOCATIONS;
 
@@ -102,7 +102,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     setQuickFormSuccess(true);
   };
 
-  const activeTestimonial = testimonials[activeTestimonialIdx] || testimonials[0];
+  const activeTestimonial = testimonials[activeTestimonialIdx] || testimonials[0] || FALLBACK_TESTIMONIALS[0];
 
   const heroBgImage = settings.heroBgImage?.trim();
   const heroEyebrow = settings.heroEyebrow?.trim();
@@ -482,23 +482,23 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                   ))}
                 </div>
                 <blockquote className="text-slate-700 text-sm sm:text-base leading-relaxed italic min-h-[90px]">
-                  "{activeTestimonial.review}"
+                  "{activeTestimonial?.review || 'Exceptional physiotherapy care and recovery guidance.'}"
                 </blockquote>
               </div>
 
               <div className="pt-6 mt-6 border-t border-slate-200/80 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
-                    src={activeTestimonial.avatar}
-                    alt={activeTestimonial.name}
+                    src={activeTestimonial?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
+                    alt={activeTestimonial?.name || 'Patient'}
                     className="w-11 h-11 rounded-full object-cover border border-emerald-400"
                   />
                   <div>
                     <h4 className="text-sm font-bold text-[#0f2330] font-heading leading-tight">
-                      {activeTestimonial.name}
+                      {activeTestimonial?.name || 'Verified Patient'}
                     </h4>
                     <p className="text-xs text-emerald-700 font-medium">
-                      {activeTestimonial.location}
+                      {activeTestimonial?.location || 'Verified Patient'}
                     </p>
                   </div>
                 </div>

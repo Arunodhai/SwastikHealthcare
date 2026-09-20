@@ -13,7 +13,7 @@ interface ConditionsViewProps {
 
 export const ConditionsView: React.FC<ConditionsViewProps> = ({ onNavigate, onOpenBooking }) => {
   const { conditions: clinicConditions, settings } = useClinic();
-  const conditions = clinicConditions || FALLBACK_CONDITIONS;
+  const conditions = (clinicConditions && clinicConditions.length > 0) ? clinicConditions : FALLBACK_CONDITIONS;
   const page = getManagedPage(settings, 'conditions');
   const [selectedArea, setSelectedArea] = useState<string>('all');
 

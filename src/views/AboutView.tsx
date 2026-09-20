@@ -27,7 +27,7 @@ interface AboutViewProps {
 
 export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking }) => {
   const { teamMembers: clinicTeamMembers, galleryItems: clinicGallery, settings } = useClinic();
-  const teamMembers = clinicTeamMembers || FALLBACK_TEAM_MEMBERS;
+  const teamMembers = (clinicTeamMembers && clinicTeamMembers.length > 0) ? clinicTeamMembers : FALLBACK_TEAM_MEMBERS;
   const galleryItems = (clinicGallery && clinicGallery.length > 0) ? clinicGallery : FALLBACK_GALLERY;
   const page = getManagedPage(settings, 'about');
   const story = getManagedSection(page, 'story');

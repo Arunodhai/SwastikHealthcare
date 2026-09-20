@@ -12,7 +12,7 @@ interface GalleryViewProps {
 
 export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
   const { galleryItems: clinicGallery, settings } = useClinic();
-  const galleryItems = clinicGallery || FALLBACK_GALLERY;
+  const galleryItems = (clinicGallery && clinicGallery.length > 0) ? clinicGallery : FALLBACK_GALLERY;
   const page = getManagedPage(settings, 'gallery');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeLightboxItem, setActiveLightboxItem] = useState<GalleryItem | null>(null);
