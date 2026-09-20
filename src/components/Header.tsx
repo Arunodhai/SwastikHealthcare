@@ -53,13 +53,15 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
     <>
       {/* Main sticky navigation */}
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 ease-in-out ${
+        className={`sticky top-0 z-40 relative isolate overflow-hidden transition-all duration-300 ease-in-out ${
           isScrolled
-            ? 'bg-[#a3e635]/85 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_24px_-4px_rgba(11,35,65,0.14)] border-b border-[#8ed120]/90 py-2.5 sm:py-3'
-            : 'bg-[#a3e635] border-b border-[#8ed120]/80 shadow-[0_2px_8px_-2px_rgba(11,35,65,0.08)] py-3 sm:py-3.5'
+            ? 'bg-[linear-gradient(110deg,rgba(217,249,157,0.94)_0%,rgba(163,230,53,0.92)_48%,rgba(110,231,183,0.90)_100%)] backdrop-blur-xl backdrop-saturate-150 shadow-[0_10px_30px_-8px_rgba(11,35,65,0.22)] border-b border-white/45 py-2.5 sm:py-3'
+            : 'bg-[linear-gradient(110deg,#d9f99d_0%,#a3e635_48%,#6ee7b7_100%)] border-b border-white/55 shadow-[0_4px_16px_-6px_rgba(11,35,65,0.2)] py-3 sm:py-3.5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_-90%,rgba(255,255,255,0.95),transparent_43%),radial-gradient(circle_at_88%_180%,rgba(13,148,136,0.22),transparent_42%)]" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px -z-10 bg-gradient-to-r from-transparent via-white/80 to-transparent" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex items-center justify-between">
             {/* Swastik Healthcare Brand Lockup & Circular Emblem */}
             <ClinicBrand
@@ -85,10 +87,10 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                     key={item.path}
                     id={`nav-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                     onClick={() => handleLinkClick(item.path)}
-                    className={`relative py-1 text-[14px] transition-colors ${
+                    className={`relative rounded-full px-2.5 py-1.5 text-[14px] transition-all duration-200 ${
                       isActive
-                        ? 'text-[#0b2341] font-bold'
-                        : 'text-[#0b2341]/80 hover:text-[#0b2341] font-semibold'
+                        ? 'text-[#0b2341] font-bold bg-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]'
+                        : 'text-[#0b2341]/80 hover:text-[#0b2341] hover:bg-white/25 font-semibold'
                     }`}
                   >
                     <span>{item.label}</span>
