@@ -75,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
             />
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
+            <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
               {navItems.map((item) => {
                 const isActive =
                   item.path === '/'
@@ -87,15 +87,15 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                     key={item.path}
                     id={`nav-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                     onClick={() => handleLinkClick(item.path)}
-                    className={`relative rounded-full px-2.5 py-1.5 text-[14px] transition-all duration-200 ${
+                    className={`relative py-2 text-[13px] xl:text-[14px] whitespace-nowrap transition-colors duration-200 ${
                       isActive
-                        ? 'text-[#0b2341] font-bold bg-white/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)]'
-                        : 'text-[#0b2341]/80 hover:text-[#0b2341] hover:bg-white/25 font-semibold'
+                        ? 'text-[#0b2341] font-bold'
+                        : 'text-[#0b2341]/75 hover:text-[#0b2341] font-semibold'
                     }`}
                   >
                     <span>{item.label}</span>
                     {isActive && (
-                      <span className="absolute -bottom-1 left-0 right-0 h-[2.5px] bg-[#0b2341] rounded-full" />
+                      <span className="absolute bottom-0 left-1/2 h-0.5 w-7 -translate-x-1/2 rounded-full bg-[#0b2341]" />
                     )}
                   </button>
                 );
