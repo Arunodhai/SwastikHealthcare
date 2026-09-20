@@ -1,6 +1,5 @@
 import React from 'react';
 import { Phone, Mail, MapPin, Clock, ShieldCheck, Heart } from 'lucide-react';
-import { CLINIC_SETTINGS as FALLBACK_SETTINGS, TREATMENTS as FALLBACK_TREATMENTS, CONDITIONS as FALLBACK_CONDITIONS } from '../data/clinicData';
 import { ClinicBrand } from './SwastikLogo';
 import { useClinic } from '../context/ClinicContext';
 
@@ -11,9 +10,14 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => {
   const { settings, treatments, conditions } = useClinic();
-  const clinic = settings || FALLBACK_SETTINGS;
-  const treatmentList = treatments || FALLBACK_TREATMENTS;
-  const conditionList = conditions || FALLBACK_CONDITIONS;
+  const clinic = settings;
+  const copy = clinic.uiCopy || {};
+  const socialLinks = [
+    ['Facebook', clinic.socialLinks?.facebook],
+    ['Instagram', clinic.socialLinks?.instagram],
+    ['LinkedIn', clinic.socialLinks?.linkedin],
+    ['Google Reviews', clinic.socialLinks?.googleReviews],
+  ].filter((item): item is [string, string] => Boolean(item[1]));
 
   return (
     <footer className="bg-[#09151e] text-slate-400 text-sm border-t border-slate-800 selection:bg-emerald-800 selection:text-white">
@@ -22,13 +26,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div>
             <span className="text-xs uppercase tracking-widest font-bold text-lime-400 mb-1 block font-mono">
-              Begin Your Rehabilitation
+              {copy.footerEyebrow}
             </span>
             <h3 className="text-2xl sm:text-3xl font-bold text-white font-heading tracking-tight">
-              Ready to Regain Full Mobility and Live Pain Free?
+              {copy.footerTitle}
             </h3>
             <p className="text-slate-300 text-sm mt-1 max-w-xl">
-              Appointments available this week across our modern clinical hubs.
+              {copy.footerSubtitle}
             </p>
           </div>
 
@@ -38,7 +42,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
               onClick={onOpenBooking}
               className="px-6 py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-transform transform hover:-translate-y-0.5 active:translate-y-0"
             >
-              Book an Appointment
+              {copy.footerBookingLabel}
             </button>
             <a
               href={`tel:${clinic.phoneRaw}`}
@@ -58,45 +62,51 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
           {/* Brand & Mission Column */}
           <div className="lg:col-span-2 space-y-4">
             <ClinicBrand
+              name={clinic.name}
+              tagline={clinic.tagline}
               theme="dark"
               size="md"
               onClick={() => onNavigate('/')}
             />
             <p className="text-slate-400 text-xs leading-relaxed pr-4 pt-1">
-              Helping patients move from injury to complete mobility, recovering independence and rebuild physical resilience through evidence-based musculoskeletal care, hands-on therapy, and structured rehabilitation since 2009.
+              {copy.footerMission}
             </p>
             {/* Accreditations badge */}
             <div className="pt-2 flex items-center gap-3 text-xs text-slate-300">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                AHPRA Registered
+                {copy.footerAccreditationPrimary}
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-800/80 border border-slate-700 text-slate-300">
                 <Heart className="w-3.5 h-3.5 text-lime-400" />
-                APA Member Clinic
+                {copy.footerAccreditationSecondary}
               </span>
             </div>
             {/* Social handles */}
-            <div className="pt-3 flex items-center gap-2 text-slate-300">
-              {['Facebook', 'Instagram', 'LinkedIn', 'Google Reviews'].map((network) => (
-                <span
+            {socialLinks.length > 0 && <div className="pt-3 flex items-center gap-2 text-slate-300">
+              {socialLinks.map(([network, url]) => (
+                <a
                   key={network}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 hover:text-white flex items-center justify-center text-xs font-semibold cursor-pointer transition-colors border border-slate-700/60"
                   title={network}
+                  aria-label={network}
                 >
                   {network[0]}
-                </span>
+                </a>
               ))}
-            </div>
+            </div>}
           </div>
 
           {/* Column 1: Services / Treatments */}
           <div className="space-y-3">
             <h4 className="text-white font-bold text-xs uppercase tracking-wider font-heading">
-              Services
+              {copy.footerServicesHeading}
             </h4>
             <ul className="space-y-2 text-xs">
-              {treatmentList.map((treatment) => (
+              {treatments.map((treatment) => (
                 <li key={treatment.slug}>
                   <button
                     onClick={() => onNavigate(`/treatments/${treatment.slug}`)}
@@ -112,10 +122,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
           {/* Column 2: Conditions We Treat */}
           <div className="space-y-3">
             <h4 className="text-white font-bold text-xs uppercase tracking-wider font-heading">
-              Conditions
+              {copy.footerConditionsHeading}
             </h4>
             <ul className="space-y-2 text-xs">
-              {conditionList.map((condition) => (
+              {conditions.map((condition) => (
                 <li key={condition.slug}>
                   <button
                     onClick={() => onNavigate(`/conditions/${condition.slug}`)}
@@ -131,37 +141,37 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
           {/* Column 3: Quick Navigation */}
           <div className="space-y-3">
             <h4 className="text-white font-bold text-xs uppercase tracking-wider font-heading">
-              Clinic
+              {copy.footerClinicHeading}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <button onClick={() => onNavigate('/about')} className="hover:text-white transition-colors">
-                  About Our Clinic
+                  {copy.footerAboutLabel}
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('/about#team')} className="hover:text-white transition-colors">
-                  Our Physiotherapists
+                  {copy.footerTeamLabel}
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('/gallery')} className="hover:text-white transition-colors">
-                  Facility & Gallery
+                  {copy.footerGalleryLabel}
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('/contact')} className="hover:text-white transition-colors">
-                  Locations & Directions
+                  {copy.footerLocationsLabel}
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('/studio')} className="text-emerald-400 font-semibold hover:text-emerald-300 transition-colors flex items-center gap-1">
-                  <span>Sanity CMS Studio</span>
+                  <span>{copy.footerStudioLabel}</span>
                 </button>
               </li>
               <li>
                 <button onClick={onOpenBooking} className="text-lime-400 font-semibold hover:underline">
-                  Book Online
+                  {copy.footerBookingLinkLabel}
                 </button>
               </li>
             </ul>
@@ -170,7 +180,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
           {/* Column 4: Contact & Operating Hours */}
           <div className="space-y-3">
             <h4 className="text-white font-bold text-xs uppercase tracking-wider font-heading">
-              Contact & Hours
+              {copy.footerContactHeading}
             </h4>
             <div className="space-y-2 text-xs">
               <a
@@ -194,8 +204,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
               <div className="flex items-start gap-2 pt-1 text-slate-400">
                 <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
                 <div>
-                  <p>Mon-Thu: 7am-7:30pm</p>
-                  <p>Fri: 7am-6pm | Sat: 8am-2pm</p>
+                  {clinic.openingHours.map((slot, index) => (
+                    <p key={(slot as any)._key || index}>{slot.days}: {slot.hours}</p>
+                  ))}
                 </div>
               </div>
             </div>
@@ -205,23 +216,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
         {/* Bottom Legal / Copyright Bar */}
         <div className="mt-12 pt-8 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p className="text-center sm:text-left">
-            © {new Date().getFullYear()} Swastik Healthcare - Physiotherapy &amp; Rehabilitation Clinic. All rights reserved.
+            © {new Date().getFullYear()} {clinic.name} - {clinic.tagline}. All rights reserved.
           </p>
           <div className="flex items-center gap-4 flex-wrap">
             <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
-              Privacy Policy
+              {copy.footerPrivacyLabel}
             </button>
             <span>•</span>
             <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
-              Terms of Care
+              {copy.footerTermsLabel}
             </button>
             <span>•</span>
             <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
-              NDIS Provider Info
+              {copy.footerNdisLabel}
             </button>
             <span>•</span>
             <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
-              Patient Rights
+              {copy.footerPatientRightsLabel}
             </button>
           </div>
         </div>

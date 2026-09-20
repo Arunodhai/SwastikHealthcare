@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { TREATMENTS as FALLBACK_TREATMENTS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { TreatmentCard } from '../components/TreatmentCard';
 import { Sparkles, Filter } from 'lucide-react';
@@ -13,7 +12,7 @@ interface TreatmentsViewProps {
 
 export const TreatmentsView: React.FC<TreatmentsViewProps> = ({ onNavigate, onOpenBooking }) => {
   const { treatments: clinicTreatments, settings } = useClinic();
-  const treatments = (clinicTreatments && clinicTreatments.length > 0) ? clinicTreatments : FALLBACK_TREATMENTS;
+  const treatments = clinicTreatments;
   const page = getManagedPage(settings, 'treatments');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { CONDITIONS as FALLBACK_CONDITIONS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { ConditionCard } from '../components/ConditionCard';
 import { Activity, Filter } from 'lucide-react';
@@ -13,7 +12,7 @@ interface ConditionsViewProps {
 
 export const ConditionsView: React.FC<ConditionsViewProps> = ({ onNavigate, onOpenBooking }) => {
   const { conditions: clinicConditions, settings } = useClinic();
-  const conditions = (clinicConditions && clinicConditions.length > 0) ? clinicConditions : FALLBACK_CONDITIONS;
+  const conditions = clinicConditions;
   const page = getManagedPage(settings, 'conditions');
   const [selectedArea, setSelectedArea] = useState<string>('all');
 

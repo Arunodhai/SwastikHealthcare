@@ -21,14 +21,6 @@ import {
   Clock,
   Sparkles
 } from 'lucide-react';
-import { 
-  CLINIC_SETTINGS as FALLBACK_SETTINGS, 
-  TREATMENTS as FALLBACK_TREATMENTS, 
-  CONDITIONS as FALLBACK_CONDITIONS, 
-  TEAM_MEMBERS as FALLBACK_TEAM_MEMBERS, 
-  TESTIMONIALS as FALLBACK_TESTIMONIALS, 
-  CLINIC_LOCATIONS as FALLBACK_LOCATIONS 
-} from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { SectionHeading } from '../components/SectionHeading';
 import { TreatmentCard } from '../components/TreatmentCard';
@@ -74,12 +66,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     isLoading,
   } = useClinic();
 
-  const treatments = (clinicTreatments && clinicTreatments.length > 0) ? clinicTreatments : FALLBACK_TREATMENTS;
-  const conditions = (clinicConditions && clinicConditions.length > 0) ? clinicConditions : FALLBACK_CONDITIONS;
-  const teamMembers = (clinicTeamMembers && clinicTeamMembers.length > 0) ? clinicTeamMembers : FALLBACK_TEAM_MEMBERS;
-  const testimonials = (clinicTestimonials && clinicTestimonials.length > 0) ? clinicTestimonials : FALLBACK_TESTIMONIALS;
-  const settings = clinicSettings || FALLBACK_SETTINGS;
-  const locations = (clinicLocations && clinicLocations.length > 0) ? clinicLocations : FALLBACK_LOCATIONS;
+  const treatments = clinicTreatments;
+  const conditions = clinicConditions;
+  const teamMembers = clinicTeamMembers;
+  const testimonials = clinicTestimonials;
+  const settings = clinicSettings;
+  const locations = clinicLocations;
+  const copy = settings.uiCopy || {};
 
   const [activeTestimonialIdx, setActiveTestimonialIdx] = useState(0);
 
@@ -87,7 +80,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     fullName: '',
     phone: '',
     injuryConcern: '',
-    location: locations[0]?.id || FALLBACK_LOCATIONS[0].id,
+    location: locations[0]?.id || '',
     appointmentType: 'Initial Physiotherapy Consultation (45m)',
     preferredTime: 'Anytime Today / Tomorrow',
   });
@@ -102,7 +95,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     setQuickFormSuccess(true);
   };
 
-  const activeTestimonial = testimonials[activeTestimonialIdx] || testimonials[0] || FALLBACK_TESTIMONIALS[0];
+  const activeTestimonial = testimonials[activeTestimonialIdx] || testimonials[0];
 
   const heroBgImage = settings.heroBgImage?.trim();
   const heroEyebrow = settings.heroEyebrow?.trim();
@@ -216,9 +209,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
       <section className="py-16 sm:py-20 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            badge={settings.servicesBadge || "Clinical Expertise"}
-            title={settings.servicesTitle || "Our Physiotherapy Services"}
-            subtitle={settings.servicesSubtitle || "Targeted treatment plans designed by registered physiotherapists to alleviate pain, rebuild mobility, and return you to full capacity."}
+            badge={settings.servicesBadge}
+            title={settings.servicesTitle || ''}
+            subtitle={settings.servicesSubtitle}
             align="center"
           />
 
@@ -239,7 +232,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               onClick={() => onNavigate('/treatments')}
               className="px-8 py-3.5 rounded-full text-xs uppercase tracking-wider font-bold bg-[#0f2330] hover:bg-[#193b50] text-white shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
             >
-              <span>View All Services</span>
+              <span>{copy.homeServicesCtaLabel}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -251,15 +244,15 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#0f2330] font-heading tracking-tight">
-              {settings.whyChooseUsTitle || 'Why Patients Choose Us'}
+              {settings.whyChooseUsTitle}
             </h2>
             <p className="text-sm text-slate-500 mt-1 max-w-xl mx-auto">
-              {settings.whyChooseUsSubtitle || 'Our clinical standard ensures every patient receives focused, evidence-based attention.'}
+              {settings.whyChooseUsSubtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6 text-center">
-            {((settings && settings.trustHighlights && settings.trustHighlights.length > 0) ? settings.trustHighlights : (FALLBACK_SETTINGS.trustHighlights || [])).map((item, idx, arr) => {
+            {(settings.trustHighlights || []).map((item, idx, arr) => {
               const isLastItemAndOdd = idx === arr.length - 1 && arr.length % 2 !== 0;
               return (
                 <div
@@ -276,6 +269,15 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               );
             })}
           </div>
+          {(settings.healthFunds || []).length > 0 && (
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+              {(settings.healthFunds || []).map((fund, index) => (
+                <span key={(fund as any)._key || index} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs">
+                  {fund.name}{fund.badgeText ? ` · ${fund.badgeText}` : ''}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -288,23 +290,18 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               <div className="lg:col-span-6 space-y-6">
                 <div>
                   <span className="text-xs font-bold text-emerald-700 tracking-wider uppercase font-mono mb-1 block">
-                    {settings.consultationEyebrow || 'Fast Consultation Access'}
+                    {settings.consultationEyebrow}
                   </span>
                   <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0f2330] font-heading tracking-tight leading-tight whitespace-pre-line">
-                    {settings.consultationTitle || 'Need Help With Pain, Injury or Recovery?'}
+                    {settings.consultationTitle}
                   </h2>
                   <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                    {settings.consultationSubtitle || 'Book an appointment with our experienced clinical team today and start feeling better, sooner.'}
+                    {settings.consultationSubtitle}
                   </p>
                 </div>
 
                 <div className="space-y-2.5 pt-2">
-                  {(settings.consultationBenefits || [
-                    'Same-week appointments available',
-                    'Private health rebates (HICAPS on-the-spot)',
-                    'Experienced & caring clinical team',
-                    'Multiple clinic locations across Sydney',
-                  ]).map((item, i) => (
+                  {(settings.consultationBenefits || []).map((item, i) => (
                     <div key={i} className="flex items-center gap-3 text-sm font-semibold text-slate-800">
                       <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
                         <CheckCircle2 className="w-3.5 h-3.5" />
@@ -314,23 +311,23 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                   ))}
                 </div>
 
-                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm mt-4">
+                {settings.consultationImage && <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm mt-4">
                   <img
-                    src={settings.consultationImage || "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80"}
-                    alt="Swastik Healthcare clinic treatment room"
+                    src={settings.consultationImage}
+                    alt={settings.consultationImageAlt || ''}
                     className="w-full h-44 object-cover"
                   />
-                </div>
+                </div>}
               </div>
 
               <div className="lg:col-span-6">
                 <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-md border border-slate-200/90">
                   <div className="mb-5 pb-3 border-b border-slate-100">
                     <h3 className="text-lg font-bold text-[#0f2330] font-heading">
-                      Request an Appointment
+                      {copy.quickFormTitle}
                     </h3>
                     <p className="text-xs text-slate-500">
-                      We will contact you promptly to confirm your appointment time.
+                      {copy.quickFormSubtitle}
                     </p>
                   </div>
 
@@ -448,7 +445,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                         className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2 mt-2"
                       >
                         <Calendar className="w-4 h-4 text-[#0f2330]" />
-                        <span>Book My Appointment</span>
+                        <span>{copy.quickFormSubmitLabel}</span>
                       </button>
                     </form>
                   )}
@@ -467,7 +464,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
             <div className="lg:col-span-5 flex flex-col justify-between bg-slate-50/70 rounded-3xl p-6 sm:p-8 border border-slate-200/80">
               <div>
                 <h3 className="text-2xl font-bold text-[#0f2330] font-heading mb-4">
-                  {settings.reviewsTitle || 'What Our Patients Say'}
+                  {settings.reviewsTitle}
                 </h3>
                 <div className="flex items-center gap-1 text-amber-400 mb-4">
                   {[...Array(5)].map((_, i) => (
@@ -475,23 +472,23 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                   ))}
                 </div>
                 <blockquote className="text-slate-700 text-sm sm:text-base leading-relaxed italic min-h-[90px]">
-                  "{activeTestimonial?.review || 'Exceptional physiotherapy care and recovery guidance.'}"
+                  "{activeTestimonial?.review}"
                 </blockquote>
               </div>
 
               <div className="pt-6 mt-6 border-t border-slate-200/80 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
-                    src={activeTestimonial?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}
-                    alt={activeTestimonial?.name || 'Patient'}
+                    src={activeTestimonial?.avatar}
+                    alt={activeTestimonial?.name || ''}
                     className="w-11 h-11 rounded-full object-cover border border-emerald-400"
                   />
                   <div>
                     <h4 className="text-sm font-bold text-[#0f2330] font-heading leading-tight">
-                      {activeTestimonial?.name || 'Verified Patient'}
+                      {activeTestimonial?.name}
                     </h4>
                     <p className="text-xs text-emerald-700 font-medium">
-                      {activeTestimonial?.location || 'Verified Patient'}
+                      {activeTestimonial?.location}
                     </p>
                   </div>
                 </div>
@@ -531,13 +528,13 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold text-[#0f2330] font-heading">
-                    {settings.teamTitle || 'Meet Our Physiotherapists'}
+                    {settings.teamTitle}
                   </h3>
                   <button
                     onClick={() => onNavigate('/about')}
                     className="text-xs font-bold text-emerald-700 hover:underline hidden sm:inline-block"
                   >
-                    View All Credentials &rarr;
+                    {copy.homeTeamCredentialsLabel} &rarr;
                   </button>
                 </div>
 
@@ -572,7 +569,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                   onClick={() => onNavigate('/about')}
                   className="px-6 py-2.5 rounded-full text-xs font-bold border border-slate-300 hover:bg-slate-50 text-slate-800 transition-colors inline-flex items-center gap-1.5"
                 >
-                  <span>View Our Team</span>
+                  <span>{copy.homeTeamCtaLabel}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -586,20 +583,20 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <span className="text-xs font-bold text-emerald-700 tracking-wider uppercase font-mono mb-1 block">
-              {settings.howItWorksEyebrow || 'Clear Recovery Process'}
+              {settings.howItWorksEyebrow}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f2330] font-heading tracking-tight">
-              {settings.howItWorksTitle || 'How It Works'}
+              {settings.howItWorksTitle}
             </h2>
             <p className="text-sm text-slate-500 mt-1 max-w-lg mx-auto">
-              {settings.howItWorksSubtitle || 'From your first diagnostic session to lasting physical resilience.'}
+              {settings.howItWorksSubtitle}
             </p>
           </div>
 
           <div className="relative">
             <div className="hidden lg:block absolute top-6 left-12 right-12 h-0.5 bg-slate-200 -z-0"></div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 relative z-10 text-center">
-              {(settings.howItWorks || FALLBACK_SETTINGS.howItWorks).map((step, idx) => (
+              {(settings.howItWorks || []).map((step, idx) => (
                 <div key={(step as any)._key || (step as any)._id || `step-${step.step || idx}`} className="flex flex-col items-center">
                   <div className="w-12 h-12 rounded-full bg-[#0f766e] text-white font-bold text-sm flex items-center justify-center shadow-md mb-3 ring-4 ring-white">
                     {step.step}
@@ -621,9 +618,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
       <section className="py-16 sm:py-20 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            badge={settings.conditionsBadge || "Targeted Recovery"}
-            title={settings.conditionsTitle || "Conditions We Treat"}
-            subtitle={settings.conditionsSubtitle || "From acute sports injuries to persistent spine complaints, our therapists address root mechanics rather than masking symptoms."}
+            badge={settings.conditionsBadge}
+            title={settings.conditionsTitle || ''}
+            subtitle={settings.conditionsSubtitle}
             align="center"
           />
 
@@ -643,7 +640,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               onClick={() => onNavigate('/conditions')}
               className="text-xs uppercase tracking-wider font-bold text-emerald-800 hover:text-emerald-950 inline-flex items-center gap-1.5 border-b-2 border-emerald-600 pb-0.5"
             >
-              <span>Explore All Musculoskeletal Conditions</span>
+              <span>{copy.homeConditionsCtaLabel}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

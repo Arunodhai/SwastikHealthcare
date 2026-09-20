@@ -1,4 +1,4 @@
-import { ClinicSettings, ManagedPage, ManagedPageSection } from '../types/clinic';
+import { ClinicSettings, ManagedPage } from '../types/clinic';
 
 export const DEFAULT_MANAGED_PAGES: Record<ManagedPage['pageKey'], ManagedPage> = {
   about: {
@@ -50,25 +50,9 @@ export const DEFAULT_MANAGED_PAGES: Record<ManagedPage['pageKey'], ManagedPage> 
   },
 };
 
-const mergeSection = (fallback: ManagedPageSection, incoming?: ManagedPageSection): ManagedPageSection => ({
-  ...fallback,
-  ...incoming,
-  imageUrl: incoming?.imageUrl || fallback.imageUrl,
-  items: incoming?.items?.length ? incoming.items : fallback.items,
-});
-
 export function getManagedPage(settings: ClinicSettings, pageKey: ManagedPage['pageKey']): ManagedPage {
-  const fallback = DEFAULT_MANAGED_PAGES[pageKey];
   const incoming = settings.navbarPages?.find((page) => page.pageKey === pageKey);
-  if (!incoming) return fallback;
-
-  return {
-    ...fallback,
-    ...incoming,
-    heroImageUrl: incoming.heroImageUrl || fallback.heroImageUrl,
-    filters: incoming.filters?.length ? incoming.filters : fallback.filters,
-    sections: fallback.sections?.map((section) => mergeSection(section, incoming.sections?.find((candidate) => candidate.key === section.key))),
-  };
+  return incoming || { pageKey, filters: [], sections: [] };
 }
 
 export const getManagedSection = (page: ManagedPage, key: string) => page.sections?.find((section) => section.key === key);

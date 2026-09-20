@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GALLERY_ITEMS as FALLBACK_GALLERY } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { GalleryItem } from '../types/clinic';
 import { X, ChevronLeft, ChevronRight, Maximize2, Sparkles, Filter } from 'lucide-react';
@@ -12,7 +11,7 @@ interface GalleryViewProps {
 
 export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
   const { galleryItems: clinicGallery, settings } = useClinic();
-  const galleryItems = (clinicGallery && clinicGallery.length > 0) ? clinicGallery : FALLBACK_GALLERY;
+  const galleryItems = clinicGallery;
   const page = getManagedPage(settings, 'gallery');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeLightboxItem, setActiveLightboxItem] = useState<GalleryItem | null>(null);

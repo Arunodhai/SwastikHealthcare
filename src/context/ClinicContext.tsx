@@ -9,15 +9,6 @@ import {
   ClinicLocationItem,
   CustomPage
 } from '../types/clinic';
-import {
-  CLINIC_SETTINGS as DEFAULT_CLINIC_SETTINGS,
-  TREATMENTS as DEFAULT_TREATMENTS,
-  CONDITIONS as DEFAULT_CONDITIONS,
-  TEAM_MEMBERS as DEFAULT_TEAM_MEMBERS,
-  TESTIMONIALS as DEFAULT_TESTIMONIALS,
-  GALLERY_ITEMS as DEFAULT_GALLERY_ITEMS,
-  CLINIC_LOCATIONS as DEFAULT_CLINIC_LOCATIONS
-} from '../data/clinicData';
 import { 
   fetchSanityClinicData, 
   sanityClient,
@@ -62,8 +53,21 @@ const defaultStatus: SanityStatus = {
   error: null,
 };
 
+const EMPTY_CLINIC_SETTINGS: ClinicSettings = {
+  name: '',
+  tagline: '',
+  phone: '',
+  phoneRaw: '',
+  email: '',
+  address: { street: '', suburb: '', city: '', state: '', postcode: '', full: '' },
+  openingHours: [],
+  whatsappNumber: '',
+  whatsappMessage: '',
+  howItWorks: [],
+};
+
 const ClinicContext = createContext<ClinicContextValue>({
-  settings: DEFAULT_CLINIC_SETTINGS,
+  settings: EMPTY_CLINIC_SETTINGS,
   treatments: [],
   conditions: [],
   teamMembers: [],
@@ -78,13 +82,13 @@ const ClinicContext = createContext<ClinicContextValue>({
 });
 
 export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<ClinicSettings>(DEFAULT_CLINIC_SETTINGS);
-  const [treatments, setTreatments] = useState<Treatment[]>(DEFAULT_TREATMENTS);
-  const [conditions, setConditions] = useState<Condition[]>(DEFAULT_CONDITIONS);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(DEFAULT_TEAM_MEMBERS);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(DEFAULT_TESTIMONIALS);
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(DEFAULT_GALLERY_ITEMS);
-  const [locations, setLocations] = useState<ClinicLocationItem[]>(DEFAULT_CLINIC_LOCATIONS as ClinicLocationItem[]);
+  const [settings, setSettings] = useState<ClinicSettings>(EMPTY_CLINIC_SETTINGS);
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [locations, setLocations] = useState<ClinicLocationItem[]>([]);
   const [customPages, setCustomPages] = useState<CustomPage[]>([]);
   const [sanityStatus, setSanityStatus] = useState<SanityStatus>(defaultStatus);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -93,14 +97,14 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsLoading(true);
     try {
       const data = await fetchSanityClinicData();
-      if (data.settings) setSettings(data.settings);
-      if (data.treatments && data.treatments.length > 0) setTreatments(data.treatments);
-      if (data.conditions && data.conditions.length > 0) setConditions(data.conditions);
-      if (data.teamMembers && data.teamMembers.length > 0) setTeamMembers(data.teamMembers);
-      if (data.testimonials && data.testimonials.length > 0) setTestimonials(data.testimonials);
-      if (data.galleryItems && data.galleryItems.length > 0) setGalleryItems(data.galleryItems);
-      if (data.locations && data.locations.length > 0) setLocations(data.locations);
-      if (data.customPages && data.customPages.length > 0) setCustomPages(data.customPages);
+      setSettings(data.settings || EMPTY_CLINIC_SETTINGS);
+      setTreatments(data.treatments || []);
+      setConditions(data.conditions || []);
+      setTeamMembers(data.teamMembers || []);
+      setTestimonials(data.testimonials || []);
+      setGalleryItems(data.galleryItems || []);
+      setLocations(data.locations || []);
+      setCustomPages(data.customPages || []);
       setSanityStatus(data.status);
     } catch {
       // Retain robust default values

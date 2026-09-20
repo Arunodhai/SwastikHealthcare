@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { X, Calendar, CheckCircle, ShieldCheck, User, Phone, Mail } from 'lucide-react';
-import { TREATMENTS as FALLBACK_TREATMENTS, TEAM_MEMBERS as FALLBACK_TEAM_MEMBERS, CLINIC_SETTINGS as FALLBACK_SETTINGS, CLINIC_LOCATIONS as FALLBACK_LOCATIONS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { AppointmentFormData } from '../types/clinic';
 import { SwastikEmblem } from './SwastikLogo';
@@ -17,17 +16,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   defaultTreatmentSlug,
 }) => {
   const { treatments: clinicTreatments, teamMembers: clinicTeamMembers, locations: clinicLocations } = useClinic();
-  const treatments = clinicTreatments || FALLBACK_TREATMENTS;
-  const teamMembers = clinicTeamMembers || FALLBACK_TEAM_MEMBERS;
-  const locations = (clinicLocations && clinicLocations.length > 0) ? clinicLocations : FALLBACK_LOCATIONS;
+  const treatments = clinicTreatments;
+  const teamMembers = clinicTeamMembers;
+  const locations = clinicLocations;
 
   const [formData, setFormData] = useState<AppointmentFormData>({
     fullName: '',
     phone: '',
     email: '',
     injuryConcern: '',
-    location: locations[0]?.id || FALLBACK_LOCATIONS[0].id,
-    treatmentSlug: defaultTreatmentSlug || treatments[0]?.slug || FALLBACK_TREATMENTS[0].slug,
+    location: locations[0]?.id || '',
+    treatmentSlug: defaultTreatmentSlug || treatments[0]?.slug || '',
     preferredPractitioner: 'any',
     preferredDate: '',
     preferredTime: 'morning',
@@ -85,8 +84,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       phone: '',
       email: '',
       injuryConcern: '',
-      location: locations[0]?.id || FALLBACK_LOCATIONS[0].id,
-      treatmentSlug: defaultTreatmentSlug || treatments[0]?.slug || FALLBACK_TREATMENTS[0].slug,
+      location: locations[0]?.id || '',
+      treatmentSlug: defaultTreatmentSlug || treatments[0]?.slug || '',
       preferredPractitioner: 'any',
       preferredDate: '',
       preferredTime: 'morning',

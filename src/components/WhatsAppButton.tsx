@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
-import { CLINIC_SETTINGS as FALLBACK_SETTINGS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 
 export const WhatsAppButton: React.FC = () => {
   const { settings: clinicSettings } = useClinic();
-  const settings = clinicSettings || FALLBACK_SETTINGS;
+  const settings = clinicSettings;
+  const copy = settings.uiCopy || {};
   const [showTooltip, setShowTooltip] = useState(false);
 
   // Sanitized phone number for WhatsApp link (digits only)
-  const cleanPhone = (settings.whatsappNumber || FALLBACK_SETTINGS.whatsappNumber).replace(/[^0-9]/g, '');
-  const encodedMsg = encodeURIComponent(
-    "Hi Swastik Healthcare, I would like to enquire about booking an appointment."
-  );
+  const cleanPhone = settings.whatsappNumber.replace(/[^0-9]/g, '');
+  const encodedMsg = encodeURIComponent(settings.whatsappMessage || '');
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMsg}`;
+
+  if (!cleanPhone) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end pointer-events-none">
@@ -29,10 +29,10 @@ export const WhatsAppButton: React.FC = () => {
           </button>
           <div className="font-semibold text-slate-900 flex items-center gap-1.5 mb-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-            Clinic Reception Online
+            {copy.whatsappTooltipTitle}
           </div>
           <p className="text-slate-600">
-            Have a question about injuries or fees? Chat with our team on WhatsApp.
+            {copy.whatsappTooltipText}
           </p>
           <a
             href={whatsappUrl}
@@ -40,7 +40,7 @@ export const WhatsAppButton: React.FC = () => {
             rel="noopener noreferrer"
             className="mt-2 inline-flex items-center gap-1 font-bold text-emerald-700 hover:underline"
           >
-            Start WhatsApp Chat &rarr;
+            {copy.whatsappCtaLabel} &rarr;
           </a>
         </div>
       )}
@@ -57,7 +57,7 @@ export const WhatsAppButton: React.FC = () => {
       >
         <MessageCircle className="w-5 h-5 fill-current text-white" />
         <span className="text-xs font-bold tracking-wide hidden sm:inline-block">
-          Chat on WhatsApp
+          {copy.whatsappButtonLabel}
         </span>
       </a>
     </div>

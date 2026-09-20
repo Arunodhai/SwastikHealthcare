@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Phone, Menu, X, ChevronRight } from 'lucide-react';
-import { CLINIC_SETTINGS as FALLBACK_SETTINGS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { ClinicBrand } from './SwastikLogo';
 
@@ -12,7 +11,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenBooking }) => {
   const { settings: clinicSettings, customPages } = useClinic();
-  const settings = clinicSettings || FALLBACK_SETTINGS;
+  const settings = clinicSettings;
+  const copy = settings.uiCopy || {};
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -25,13 +25,13 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
   }, []);
 
   const baseNavItems = [
-    { label: 'Home', path: '/' },
-    { label: 'About Us', path: '/about' },
-    { label: 'Treatments', path: '/treatments' },
-    { label: 'Conditions We Treat', path: '/conditions' },
-    { label: 'Gallery', path: '/gallery' },
-    { label: 'Contact', path: '/contact' },
-  ];
+    { label: copy.navHomeLabel, path: '/' },
+    { label: copy.navAboutLabel, path: '/about' },
+    { label: copy.navTreatmentsLabel, path: '/treatments' },
+    { label: copy.navConditionsLabel, path: '/conditions' },
+    { label: copy.navGalleryLabel, path: '/gallery' },
+    { label: copy.navContactLabel, path: '/contact' },
+  ].filter((item): item is { label: string; path: string } => Boolean(item.label));
 
   // Merge any dynamically created Sanity pages marked for top navigation
   const dynamicNavItems = (customPages || [])
@@ -63,6 +63,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
           <div className="flex items-center justify-between">
             {/* Swastik Healthcare Brand Lockup & Circular Emblem */}
             <ClinicBrand
+              name={settings.name}
+              tagline={settings.tagline}
               theme="lime"
               onClick={() => handleLinkClick('/')}
               size="md"
@@ -106,7 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-bold bg-[#0b2341] hover:bg-[#071927] text-white shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] border border-white/10 ring-1 ring-black/10"
               >
                 <Calendar className="w-3.5 h-3.5 text-[#a3e635]" />
-                <span>Book an Appointment</span>
+                <span>{copy.headerBookingLabel}</span>
               </button>
             </div>
 
@@ -117,7 +119,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                 onClick={() => onOpenBooking()}
                 className="sm:hidden px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0b2341] hover:bg-[#071927] text-white shadow-xs active:scale-95 transition-all"
               >
-                Book
+                {copy.headerMobileBookingLabel}
               </button>
 
               <button
@@ -139,6 +141,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
           <div className="w-full max-w-sm bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <ClinicBrand
+                name={settings.name}
+                tagline={settings.tagline}
                 onClick={() => handleLinkClick('/')}
                 size="sm"
               />
@@ -186,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                 className="w-full py-3.5 px-4 rounded-xl text-center font-bold text-sm bg-[#a3e635] text-[#0f2330] shadow flex items-center justify-center gap-2 uppercase tracking-wide"
               >
                 <Calendar className="w-4 h-4" />
-                <span>Book an Appointment</span>
+                <span>{copy.headerBookingLabel}</span>
               </button>
 
               <a
@@ -198,8 +202,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
               </a>
 
               <div className="text-center text-xs text-slate-500 pt-2">
-                <p>{settings.address?.full || 'Level 2, 452 Medical Promenade, Sydney'}</p>
-                <p className="text-emerald-700 font-medium mt-1">Health Fund Rebates (HICAPS) on the spot</p>
+                <p>{settings.address?.full}</p>
+                {copy.mobileRebateNote && <p className="text-emerald-700 font-medium mt-1">{copy.mobileRebateNote}</p>}
               </div>
             </div>
           </div>

@@ -146,24 +146,18 @@ export async function fetchSanityClinicData() {
 
       if (sanitySettings) {
         result.settings = {
-          ...DEFAULT_CLINIC_SETTINGS,
           ...sanitySettings,
-          heroEyebrow: (typeof sanitySettings.heroEyebrow === 'string' && sanitySettings.heroEyebrow.trim()) || DEFAULT_CLINIC_SETTINGS.heroEyebrow,
-          heroTitle: (typeof sanitySettings.heroTitle === 'string' && sanitySettings.heroTitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroTitle,
-          heroSubtitle: (typeof sanitySettings.heroSubtitle === 'string' && sanitySettings.heroSubtitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroSubtitle,
-          heroImageAlt: (typeof sanitySettings.heroImageAlt === 'string' && sanitySettings.heroImageAlt.trim()) || DEFAULT_CLINIC_SETTINGS.heroImageAlt,
-          heroPrimaryCtaLabel: (typeof sanitySettings.heroPrimaryCtaLabel === 'string' && sanitySettings.heroPrimaryCtaLabel.trim()) || DEFAULT_CLINIC_SETTINGS.heroPrimaryCtaLabel,
-          heroSecondaryCtaLabel: (typeof sanitySettings.heroSecondaryCtaLabel === 'string' && sanitySettings.heroSecondaryCtaLabel.trim()) || DEFAULT_CLINIC_SETTINGS.heroSecondaryCtaLabel,
-          heroBadge1Title: (typeof sanitySettings.heroBadge1Title === 'string' && sanitySettings.heroBadge1Title.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge1Title,
-          heroBadge1Subtitle: (typeof sanitySettings.heroBadge1Subtitle === 'string' && sanitySettings.heroBadge1Subtitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge1Subtitle,
-          heroBadge2Title: (typeof sanitySettings.heroBadge2Title === 'string' && sanitySettings.heroBadge2Title.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge2Title,
-          heroBadge2Subtitle: (typeof sanitySettings.heroBadge2Subtitle === 'string' && sanitySettings.heroBadge2Subtitle.trim()) || DEFAULT_CLINIC_SETTINGS.heroBadge2Subtitle,
           heroBgImage: sanitySettings.heroBgImage?.asset
             ? urlFor(sanitySettings.heroBgImage).auto('format').width(1800).url()
-            : DEFAULT_CLINIC_SETTINGS.heroBgImage,
+            : undefined,
           consultationImage: sanitySettings.consultationImage?.asset
             ? urlFor(sanitySettings.consultationImage).auto('format').width(1200).url()
-            : sanitySettings.consultationImage,
+            : undefined,
+          openingHours: Array.isArray(sanitySettings.openingHours) ? sanitySettings.openingHours : [],
+          healthFunds: Array.isArray(sanitySettings.healthFunds) ? sanitySettings.healthFunds : [],
+          trustHighlights: Array.isArray(sanitySettings.trustHighlights) ? sanitySettings.trustHighlights : [],
+          howItWorks: Array.isArray(sanitySettings.howItWorks) ? sanitySettings.howItWorks : [],
+          navbarPages: Array.isArray(sanitySettings.navbarPages) ? sanitySettings.navbarPages : [],
         };
       }
 

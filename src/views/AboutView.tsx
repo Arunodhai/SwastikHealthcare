@@ -7,10 +7,6 @@ import {
   Calendar,
   ArrowRight
 } from 'lucide-react';
-import { 
-  TEAM_MEMBERS as FALLBACK_TEAM_MEMBERS, 
-  GALLERY_ITEMS as FALLBACK_GALLERY 
-} from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { SectionHeading } from '../components/SectionHeading';
 import { TeamCard } from '../components/TeamCard';
@@ -27,8 +23,8 @@ interface AboutViewProps {
 
 export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking }) => {
   const { teamMembers: clinicTeamMembers, galleryItems: clinicGallery, settings } = useClinic();
-  const teamMembers = (clinicTeamMembers && clinicTeamMembers.length > 0) ? clinicTeamMembers : FALLBACK_TEAM_MEMBERS;
-  const galleryItems = (clinicGallery && clinicGallery.length > 0) ? clinicGallery : FALLBACK_GALLERY;
+  const teamMembers = clinicTeamMembers;
+  const galleryItems = clinicGallery;
   const page = getManagedPage(settings, 'about');
   const story = getManagedSection(page, 'story');
   const certification = getManagedSection(page, 'certification');

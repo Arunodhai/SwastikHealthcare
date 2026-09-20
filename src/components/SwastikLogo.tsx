@@ -152,12 +152,16 @@ interface SwastikBrandTextProps {
   theme?: 'light' | 'dark' | 'lime';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   showTagline?: boolean;
+  name?: string;
+  tagline?: string;
 }
 
 export const SwastikBrandText: React.FC<SwastikBrandTextProps> = ({
   theme = 'light',
   size = 'md',
   showTagline = true,
+  name = '',
+  tagline = '',
 }) => {
   const isDark = theme === 'dark';
   const isLime = theme === 'lime';
@@ -176,14 +180,18 @@ export const SwastikBrandText: React.FC<SwastikBrandTextProps> = ({
     xl: 'text-sm sm:text-base tracking-[0.2em]',
   }[size];
 
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const accentWord = words.length > 1 ? words.pop() : '';
+  const leadingName = words.join(' ');
+
   return (
     <div className="flex flex-col leading-none select-none">
       <div className={`font-extrabold font-heading tracking-tight flex items-baseline ${nameSizeClasses}`}>
         <span className={isDark ? 'text-white' : isLime ? 'text-[#0b2341]' : 'text-[#0047b3]'}>
-          Swastik
+          {leadingName}
         </span>
         <span className={isDark ? 'text-[#a3e635]' : isLime ? 'text-[#053d1b]' : 'text-[#65ba00]'}>
-          Healthcare
+          {accentWord}
         </span>
       </div>
       {showTagline && (
@@ -193,7 +201,7 @@ export const SwastikBrandText: React.FC<SwastikBrandTextProps> = ({
           }`}
           style={{ letterSpacing: '0.12em' }}
         >
-          Physiotherapy &amp; Rehabilitation Clinic
+          {tagline}
         </span>
       )}
     </div>
@@ -207,6 +215,8 @@ interface ClinicBrandProps {
   emblemClassName?: string;
   onClick?: () => void;
   className?: string;
+  name?: string;
+  tagline?: string;
 }
 
 export const ClinicBrand: React.FC<ClinicBrandProps> = ({
@@ -216,6 +226,8 @@ export const ClinicBrand: React.FC<ClinicBrandProps> = ({
   emblemClassName,
   onClick,
   className = '',
+  name = '',
+  tagline = '',
 }) => {
   const emblemSizes = {
     sm: 'w-9 h-9',
@@ -227,7 +239,7 @@ export const ClinicBrand: React.FC<ClinicBrandProps> = ({
   const content = (
     <div className={`inline-flex items-center gap-3 sm:gap-3.5 ${className}`}>
       <SwastikEmblem className={emblemClassName || emblemSizes} />
-      <SwastikBrandText theme={theme} size={size} showTagline={showTagline} />
+      <SwastikBrandText theme={theme} size={size} showTagline={showTagline} name={name} tagline={tagline} />
     </div>
   );
 
@@ -238,7 +250,7 @@ export const ClinicBrand: React.FC<ClinicBrandProps> = ({
         id="swastik-brand-cta-button"
         onClick={onClick}
         className="text-left group focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
-        aria-label="Swastik Healthcare Home"
+        aria-label={`${name} Home`}
       >
         {content}
       </button>

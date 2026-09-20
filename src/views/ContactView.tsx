@@ -11,7 +11,6 @@ import {
   Building2,
   Calendar
 } from 'lucide-react';
-import { CLINIC_SETTINGS as FALLBACK_SETTINGS, CLINIC_LOCATIONS as FALLBACK_LOCATIONS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { PageHero } from '../components/PageHero';
 import { getManagedPage, getManagedSection } from '../data/pageContent';
@@ -22,7 +21,7 @@ interface ContactViewProps {
 
 export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
   const { settings: clinicSettings, locations: clinicLocations } = useClinic();
-  const settings = clinicSettings || FALLBACK_SETTINGS;
+  const settings = clinicSettings;
   const page = getManagedPage(settings, 'contact');
   const directSection = getManagedSection(page, 'direct');
   const formSection = getManagedSection(page, 'form');
@@ -30,8 +29,8 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
   const directItems = Object.fromEntries((directSection?.items || []).map((item) => [item.key, item]));
   const formItems = Object.fromEntries((formSection?.items || []).map((item) => [item.key, item]));
   const locationItems = Object.fromEntries((locationsSection?.items || []).map((item) => [item.key, item]));
-  const locations = (clinicLocations && clinicLocations.length > 0) ? clinicLocations : FALLBACK_LOCATIONS;
-  const [selectedLocation, setSelectedLocation] = useState(locations[0]?.id || FALLBACK_LOCATIONS[0].id);
+  const locations = clinicLocations;
+  const [selectedLocation, setSelectedLocation] = useState(locations[0]?.id || '');
 
   const [contactForm, setContactForm] = useState({
     name: '',
@@ -44,7 +43,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const activeLoc = locations.find(l => l.id === selectedLocation) || locations[0] || FALLBACK_LOCATIONS[0];
+  const activeLoc = locations.find(l => l.id === selectedLocation) || locations[0];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,8 +58,8 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
     }, 600);
   };
 
-  const cleanPhone = (settings.whatsappNumber || FALLBACK_SETTINGS.whatsappNumber).replace(/[^0-9]/g, '');
-  const encodedMsg = encodeURIComponent("Hi Swastik Healthcare, I have an enquiry about your services.");
+  const cleanPhone = settings.whatsappNumber.replace(/[^0-9]/g, '');
+  const encodedMsg = encodeURIComponent(settings.whatsappMessage || '');
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMsg}`;
 
   return (
@@ -145,7 +144,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                     </h4>
                   </div>
                   <div className="space-y-2 text-xs">
-                    {(settings.openingHours || FALLBACK_SETTINGS.openingHours).map((slot, i) => (
+                    {settings.openingHours.map((slot, i) => (
                       <div key={i} className="flex justify-between text-slate-600">
                         <span>{slot.days}</span>
                         <span className="font-semibold text-slate-900">{slot.hours}</span>
@@ -288,7 +287,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
       </section>
 
       {/* Google Maps & Location Selector Section */}
-      <section className="py-16 bg-slate-50/70 border-b border-slate-100">
+      {activeLoc && <section className="py-16 bg-slate-50/70 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -368,7 +367,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
             </div>
           </div>
         </div>
-      </section>
+      </section>}
     </div>
   );
 };
