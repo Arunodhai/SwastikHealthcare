@@ -110,7 +110,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
   return (
     <div className="bg-white">
       {/* 1. HERO SECTION */}
-      <section className="relative overflow-hidden pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200/80 bg-slate-50">
+      <section className="relative overflow-hidden pt-4 pb-6 sm:pt-8 sm:pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200/80 bg-slate-50">
         <div className="absolute inset-0 z-0">
           {heroBgImage && (
             <img
@@ -124,7 +124,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl space-y-6 py-4 sm:py-8 lg:py-12">
+          <div className="max-w-2xl lg:max-w-xl xl:max-w-2xl space-y-5 py-1 sm:space-y-6 sm:py-8 lg:py-12">
             
             {heroEyebrow ? (
               <div className="inline-flex items-center gap-2.5 text-[#0b2341] text-xs sm:text-sm font-bold tracking-wide">
@@ -148,7 +148,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
               </p>
             )}
 
-            {(heroPrimaryCtaLabel || heroSecondaryCtaLabel) && <div className="flex flex-wrap items-center gap-4 pt-2">
+            {(heroPrimaryCtaLabel || heroSecondaryCtaLabel) && <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1 sm:pt-2">
               {heroPrimaryCtaLabel && (
               <button
                 id="hero-book-btn"
@@ -173,7 +173,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
             </div>}
 
             {(hasHeroBadge1 || hasHeroBadge2) && (
-            <div className="pt-6 border-t border-slate-200/80 flex flex-wrap items-center gap-6 text-xs text-slate-600">
+            <div className="pt-4 sm:pt-6 border-t border-slate-200/80 flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-slate-600">
               {hasHeroBadge1 && <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-emerald-100/80 flex items-center justify-center text-emerald-700">
                   <ShieldCheck className="w-4 h-4" />
@@ -206,7 +206,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
       </section>
 
       {/* 2. OUR PHYSIOTHERAPY SERVICES */}
-      <section className="py-16 sm:py-20 bg-white border-b border-slate-100">
+      <section className="pt-8 pb-12 sm:py-20 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             badge={settings.servicesBadge}
