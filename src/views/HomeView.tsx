@@ -116,7 +116,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
             <img
               src={heroBgImage}
               alt={heroImageAlt}
-              className="w-full h-full object-cover object-right sm:object-center"
+              className="w-full h-full object-cover object-[70%_center] sm:object-center"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/60 sm:from-white sm:via-white/90 sm:to-transparent lg:from-white lg:via-white/85 lg:via-45% lg:to-transparent lg:to-70%" />
