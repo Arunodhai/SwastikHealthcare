@@ -3,24 +3,21 @@ import { GALLERY_ITEMS as FALLBACK_GALLERY } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { GalleryItem } from '../types/clinic';
 import { X, ChevronLeft, ChevronRight, Maximize2, Sparkles, Filter } from 'lucide-react';
+import { PageHero } from '../components/PageHero';
+import { getManagedPage } from '../data/pageContent';
 
 interface GalleryViewProps {
   onOpenBooking: () => void;
 }
 
 export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
-  const { galleryItems: clinicGallery } = useClinic();
+  const { galleryItems: clinicGallery, settings } = useClinic();
   const galleryItems = clinicGallery || FALLBACK_GALLERY;
+  const page = getManagedPage(settings, 'gallery');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeLightboxItem, setActiveLightboxItem] = useState<GalleryItem | null>(null);
 
-  const categories = [
-    { id: 'all', label: 'All Photos' },
-    { id: 'clinic', label: 'Treatment Rooms' },
-    { id: 'rehab', label: 'Rehab Gym' },
-    { id: 'equipment', label: 'Clinical Equipment' },
-    { id: 'sessions', label: 'Clinical Care' },
-  ];
+  const categories = (page.filters || []).map((item) => ({ id: item.key, label: item.label || item.key }));
 
   const filteredItems = selectedCategory === 'all'
     ? galleryItems
@@ -42,26 +39,19 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
 
   return (
     <div className="bg-white">
-      {/* Header Banner */}
-      <section className="bg-gradient-to-b from-slate-50 to-white pt-12 pb-14 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Modern Clinical Environments</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#0f2330] font-heading leading-tight">
-              Clinic &amp; Rehabilitation Gallery
-            </h1>
-
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              Explore our modern treatment rooms, private consultation spaces, and fully equipped functional rehabilitation gym floor.
-            </p>
+      <PageHero
+        imageSrc={page.heroImageUrl || ''}
+        imageAlt={page.heroImageAlt || ''}
+        badge={(
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold tracking-wide text-emerald-800">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>{page.heroBadge}</span>
           </div>
-
-          {/* Filter tabs */}
-          <div className="mt-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        )}
+        title={page.heroTitle}
+        description={page.heroDescription}
+      >
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             <Filter className="w-4 h-4 text-slate-400 shrink-0 mr-1 hidden sm:block" />
             {categories.map((cat) => (
               <button
@@ -77,8 +67,7 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
               </button>
             ))}
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Gallery Grid */}
       <section className="py-16 border-b border-slate-100">

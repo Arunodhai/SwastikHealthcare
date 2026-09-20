@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { CLINIC_SETTINGS as FALLBACK_SETTINGS, CLINIC_LOCATIONS as FALLBACK_LOCATIONS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
+import { PageHero } from '../components/PageHero';
+import { getManagedPage, getManagedSection } from '../data/pageContent';
 
 interface ContactViewProps {
   onOpenBooking: () => void;
@@ -21,6 +23,13 @@ interface ContactViewProps {
 export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
   const { settings: clinicSettings, locations: clinicLocations } = useClinic();
   const settings = clinicSettings || FALLBACK_SETTINGS;
+  const page = getManagedPage(settings, 'contact');
+  const directSection = getManagedSection(page, 'direct');
+  const formSection = getManagedSection(page, 'form');
+  const locationsSection = getManagedSection(page, 'locations');
+  const directItems = Object.fromEntries((directSection?.items || []).map((item) => [item.key, item]));
+  const formItems = Object.fromEntries((formSection?.items || []).map((item) => [item.key, item]));
+  const locationItems = Object.fromEntries((locationsSection?.items || []).map((item) => [item.key, item]));
   const locations = (clinicLocations && clinicLocations.length > 0) ? clinicLocations : FALLBACK_LOCATIONS;
   const [selectedLocation, setSelectedLocation] = useState(locations[0]?.id || FALLBACK_LOCATIONS[0].id);
 
@@ -56,24 +65,18 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
   return (
     <div className="bg-white">
-      {/* Page Header */}
-      <section className="bg-gradient-to-b from-slate-50 to-white pt-12 pb-14 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold tracking-wide">
-              <span>Get in Touch</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#0f2330] font-heading leading-tight">
-              Contact &amp; Clinic Locations
-            </h1>
-
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              We are conveniently located in modern medical hubs across Sydney with easy public transit and dedicated parking.
-            </p>
+      <PageHero
+        imageSrc={page.heroImageUrl || ''}
+        imageAlt={page.heroImageAlt || ''}
+        badge={(
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold tracking-wide text-emerald-800">
+            <Building2 className="h-3.5 w-3.5" />
+            <span>{page.heroBadge}</span>
           </div>
-        </div>
-      </section>
+        )}
+        title={page.heroTitle}
+        description={page.heroDescription}
+      />
 
       {/* Main Grid: Details & Interactive Contact Form */}
       <section className="py-16 border-b border-slate-100">
@@ -85,7 +88,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
               
               <div className="bg-slate-50 rounded-2xl p-6 sm:p-8 border border-slate-200/80 space-y-6">
                 <h3 className="text-xl font-bold text-[#0f2330] font-heading">
-                  Direct Clinic Contact
+                  {directSection?.title}
                 </h3>
 
                 <div className="space-y-4 text-sm text-slate-700">
@@ -94,11 +97,11 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       <Phone className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 font-semibold block uppercase">Phone Inquiries</span>
+                      <span className="text-xs text-slate-500 font-semibold block uppercase">{directItems.phone?.label}</span>
                       <a href={`tel:${settings.phoneRaw}`} className="text-base font-bold text-[#0f2330] hover:text-emerald-700">
                         {settings.phone}
                       </a>
-                      <p className="text-xs text-slate-500 mt-0.5">Reception team available 7:00 AM - 7:30 PM</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{directItems.phone?.description}</p>
                     </div>
                   </div>
 
@@ -107,11 +110,11 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       <Mail className="w-5 h-5" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 font-semibold block uppercase">Email Support</span>
+                      <span className="text-xs text-slate-500 font-semibold block uppercase">{directItems.email?.label}</span>
                       <a href={`mailto:${settings.email}`} className="text-sm font-bold text-[#0f2330] hover:text-emerald-700">
                         {settings.email}
                       </a>
-                      <p className="text-xs text-slate-500 mt-0.5">We respond to email inquiries within 3 business hours</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{directItems.email?.description}</p>
                     </div>
                   </div>
 
@@ -120,14 +123,14 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       <MessageCircle className="w-5 h-5 fill-current" />
                     </div>
                     <div>
-                      <span className="text-xs text-slate-500 font-semibold block uppercase">WhatsApp Chat</span>
+                      <span className="text-xs text-slate-500 font-semibold block uppercase">{directItems.whatsapp?.label}</span>
                       <a
                         href={whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm font-bold text-emerald-700 hover:underline inline-flex items-center gap-1"
                       >
-                        <span>Chat With Clinic Coordinator &rarr;</span>
+                        <span>{directItems.whatsapp?.title}</span>
                       </a>
                     </div>
                   </div>
@@ -157,7 +160,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                   className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2"
                 >
                   <Calendar className="w-4 h-4 text-[#0f2330]" />
-                  <span>Book Appointment Online</span>
+                  <span>{directSection?.ctaLabel}</span>
                 </button>
               </div>
             </div>
@@ -166,21 +169,21 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
             <div className="lg:col-span-7">
               <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm">
                 <div className="mb-6">
-                  <span className="text-xs font-bold text-emerald-700 uppercase font-mono">Message Reception</span>
+                  <span className="text-xs font-bold text-emerald-700 uppercase font-mono">{formSection?.eyebrow}</span>
                   <h3 className="text-2xl font-bold text-[#0f2330] font-heading mt-1">
-                    Send Us a Message
+                    {formSection?.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Have questions regarding injury rehabilitation, health fund cover, or referral details?
+                    {formSection?.description}
                   </p>
                 </div>
 
                 {isSubmitted ? (
                   <div className="p-8 text-center bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-900 space-y-3">
                     <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-                    <h4 className="text-xl font-bold font-heading">Message Sent Successfully</h4>
+                    <h4 className="text-xl font-bold font-heading">{formItems.success?.title}</h4>
                     <p className="text-sm text-slate-700 max-w-md mx-auto">
-                      Thank you for contacting Swastik Healthcare. One of our clinical team members will be in touch with you shortly.
+                      {formItems.success?.description}
                     </p>
                     <button
                       onClick={() => setIsSubmitted(false)}
@@ -274,7 +277,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       className="px-6 py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-[#0f2330] hover:bg-[#193b50] text-white shadow transition-all flex items-center gap-2"
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+                      <span>{isSubmitting ? 'Sending...' : formSection?.ctaLabel}</span>
                     </button>
                   </form>
                 )}
@@ -289,9 +292,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <span className="text-xs font-bold text-emerald-700 uppercase font-mono">Interactive Map &amp; Directions</span>
+              <span className="text-xs font-bold text-emerald-700 uppercase font-mono">{locationsSection?.eyebrow}</span>
               <h2 className="text-2xl sm:text-3xl font-bold text-[#0f2330] font-heading mt-1">
-                Find Your Nearest Clinic
+                {locationsSection?.title}
               </h2>
             </div>
 
@@ -330,7 +333,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
               <div className="space-y-2">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 font-mono text-[11px] font-bold">
                   <Building2 className="w-3.5 h-3.5" />
-                  Primary Facility
+                  {locationItems.primary?.label}
                 </span>
                 <h3 className="text-xl font-bold text-[#0f2330] font-heading">
                   {activeLoc.name}
@@ -341,7 +344,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
               </div>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 space-y-1.5">
-                <strong className="text-slate-900 block font-semibold">Parking &amp; Transit Access:</strong>
+                <strong className="text-slate-900 block font-semibold">{locationItems.parking?.label}</strong>
                 <p>{activeLoc.parking}</p>
               </div>
 
@@ -353,13 +356,13 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                   className="px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0f2330] hover:bg-[#193b50] text-white transition-colors inline-flex items-center gap-2"
                 >
                   <Navigation className="w-3.5 h-3.5" />
-                  <span>Get Directions in Google Maps</span>
+                  <span>{locationItems.directions?.label}</span>
                 </a>
                 <button
                   onClick={onOpenBooking}
                   className="px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] transition-colors"
                 >
-                  Book Here
+                  {locationItems.book?.label}
                 </button>
               </div>
             </div>

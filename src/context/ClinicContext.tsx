@@ -11,12 +11,6 @@ import {
 } from '../types/clinic';
 import {
   CLINIC_SETTINGS as DEFAULT_CLINIC_SETTINGS,
-  TREATMENTS as DEFAULT_TREATMENTS,
-  CONDITIONS as DEFAULT_CONDITIONS,
-  TEAM_MEMBERS as DEFAULT_TEAM_MEMBERS,
-  TESTIMONIALS as DEFAULT_TESTIMONIALS,
-  GALLERY_ITEMS as DEFAULT_GALLERY_ITEMS,
-  CLINIC_LOCATIONS as DEFAULT_CLINIC_LOCATIONS
 } from '../data/clinicData';
 import { 
   fetchSanityClinicData, 
@@ -64,12 +58,12 @@ const defaultStatus: SanityStatus = {
 
 const ClinicContext = createContext<ClinicContextValue>({
   settings: DEFAULT_CLINIC_SETTINGS,
-  treatments: DEFAULT_TREATMENTS,
-  conditions: DEFAULT_CONDITIONS,
-  teamMembers: DEFAULT_TEAM_MEMBERS,
-  testimonials: DEFAULT_TESTIMONIALS,
-  galleryItems: DEFAULT_GALLERY_ITEMS,
-  locations: DEFAULT_CLINIC_LOCATIONS,
+  treatments: [],
+  conditions: [],
+  teamMembers: [],
+  testimonials: [],
+  galleryItems: [],
+  locations: [],
   customPages: [],
   sanityStatus: defaultStatus,
   isLoading: false,
@@ -79,12 +73,12 @@ const ClinicContext = createContext<ClinicContextValue>({
 
 export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<ClinicSettings>(DEFAULT_CLINIC_SETTINGS);
-  const [treatments, setTreatments] = useState<Treatment[]>(DEFAULT_TREATMENTS);
-  const [conditions, setConditions] = useState<Condition[]>(DEFAULT_CONDITIONS);
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(DEFAULT_TEAM_MEMBERS);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>(DEFAULT_TESTIMONIALS);
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(DEFAULT_GALLERY_ITEMS);
-  const [locations, setLocations] = useState<ClinicLocationItem[]>(DEFAULT_CLINIC_LOCATIONS);
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
+  const [conditions, setConditions] = useState<Condition[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [locations, setLocations] = useState<ClinicLocationItem[]>([]);
   const [customPages, setCustomPages] = useState<CustomPage[]>([]);
   const [sanityStatus, setSanityStatus] = useState<SanityStatus>(defaultStatus);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -119,7 +113,11 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     loadData();
 
     const subscription = sanityClient
-      .listen('*[_id == "clinicSettings-singleton"]', {}, { visibility: 'query' })
+      .listen(
+        '*[_type in ["clinicSettings", "treatment", "condition", "teamMember", "testimonial", "galleryItem", "clinicLocation", "customPage"]]',
+        {},
+        { visibility: 'query' },
+      )
       .subscribe({
         next: () => loadData(),
         error: () => {

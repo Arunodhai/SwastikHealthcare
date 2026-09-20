@@ -15,6 +15,10 @@ import { useClinic } from '../context/ClinicContext';
 import { SectionHeading } from '../components/SectionHeading';
 import { TeamCard } from '../components/TeamCard';
 import { SwastikEmblem } from '../components/SwastikLogo';
+import { PageHero } from '../components/PageHero';
+import { getManagedPage, getManagedSection } from '../data/pageContent';
+
+const aboutIcons = { Building2, Sparkles, ShieldCheck, Heart };
 
 interface AboutViewProps {
   onNavigate: (path: string) => void;
@@ -22,31 +26,31 @@ interface AboutViewProps {
 }
 
 export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking }) => {
-  const { teamMembers: clinicTeamMembers, galleryItems: clinicGallery } = useClinic();
+  const { teamMembers: clinicTeamMembers, galleryItems: clinicGallery, settings } = useClinic();
   const teamMembers = clinicTeamMembers || FALLBACK_TEAM_MEMBERS;
   const galleryItems = (clinicGallery && clinicGallery.length > 0) ? clinicGallery : FALLBACK_GALLERY;
+  const page = getManagedPage(settings, 'about');
+  const story = getManagedSection(page, 'story');
+  const certification = getManagedSection(page, 'certification');
+  const difference = getManagedSection(page, 'difference');
+  const team = getManagedSection(page, 'team');
+  const facilities = getManagedSection(page, 'facilities');
+  const cta = getManagedSection(page, 'cta');
 
   return (
     <div className="bg-white">
-      {/* Page Hero */}
-      <section className="bg-gradient-to-b from-slate-50 to-white pt-12 pb-16 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-xs font-bold tracking-wide">
-              <SwastikEmblem className="w-5 h-5 rounded-full" />
-              <span>About Swastik Healthcare • Established 2009</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#0f2330] font-heading leading-tight">
-              A Modern, Evidence-Based Standard for Physical Rehabilitation.
-            </h1>
-
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              Founded in 2009 on the conviction that rehabilitation should guide patients through every milestone of recovery — from initial immobility and assistive support to independent movement and lasting strength.
-            </p>
+      <PageHero
+        imageSrc={page.heroImageUrl || ''}
+        imageAlt={page.heroImageAlt || ''}
+        badge={(
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold tracking-wide text-blue-900">
+            <SwastikEmblem className="h-5 w-5 rounded-full" />
+            <span>{page.heroBadge}</span>
           </div>
-        </div>
-      </section>
+        )}
+        title={page.heroTitle}
+        description={page.heroDescription}
+      />
 
       {/* Clinic Story & Treatment Philosophy */}
       <section className="py-16 sm:py-20 border-b border-slate-100">
@@ -55,54 +59,41 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
             
             <div className="lg:col-span-6 space-y-6">
               <span className="text-xs font-bold text-blue-700 tracking-wider uppercase font-mono">
-                Our Story &amp; Clinical Mission (Since 2009)
+                {story?.eyebrow}
               </span>
 
               <h2 className="text-3xl font-extrabold text-[#0f2330] font-heading tracking-tight leading-tight">
-                Guiding Every Stage of Your Physical Recovery Journey.
+                {story?.title}
               </h2>
 
               <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
-                <p>
-                  <strong>Swastik Healthcare</strong> was established in 2009 with a patient-centered mission symbolized in our clinical emblem: guiding individuals from acute immobility, through progressive assisted walking, to standing proud and fully restored in their daily lives.
-                </p>
-                <p>
-                  We built our clinic around an uncompromised standard: <strong>every patient deserves unhurried, private one-on-one attention</strong>, thorough diagnostic biomechanics, and a progressive rehabilitation roadmap tailored to their personal lifestyle and goals.
-                </p>
+                {story?.body?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
               </div>
 
               {/* 3 Pillars */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <span className="text-2xl font-bold text-emerald-700 font-heading">100%</span>
-                  <p className="text-xs font-semibold text-slate-800 mt-1">One-on-One Care</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">No double booking ever.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <span className="text-2xl font-bold text-emerald-700 font-heading">45m</span>
-                  <p className="text-xs font-semibold text-slate-800 mt-1">Standard Consults</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Time to listen &amp; test.</p>
-                </div>
-                <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-                  <span className="text-2xl font-bold text-emerald-700 font-heading">Full</span>
-                  <p className="text-xs font-semibold text-slate-800 mt-1">Rehabilitation Gym</p>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Real loading for real life.</p>
-                </div>
+                {story?.items?.map((item) => (
+                  <div key={item.key} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <span className="text-2xl font-bold text-emerald-700 font-heading">{item.value}</span>
+                    <p className="text-xs font-semibold text-slate-800 mt-1">{item.title}</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">{item.description}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
             <div className="lg:col-span-6">
               <div className="relative rounded-3xl overflow-hidden shadow-xl border border-slate-200">
                 <img
-                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1000&q=80"
-                  alt="Modern Swastik Healthcare clinic consultation suite"
+                  src={story?.imageUrl}
+                  alt={story?.imageAlt || ''}
                   className="w-full h-96 sm:h-110 object-cover"
                 />
                 <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
                   <ShieldCheck className="w-8 h-8 text-emerald-600 shrink-0" />
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900">AHPRA &amp; APA Certified Standards</h4>
-                    <p className="text-[11px] text-slate-600">All clinicians undergo continuous postgraduate musculoskeletal education.</p>
+                    <h4 className="text-xs font-bold text-slate-900">{certification?.title}</h4>
+                    <p className="text-[11px] text-slate-600">{certification?.description}</p>
                   </div>
                 </div>
               </div>
@@ -115,46 +106,27 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
       <section className="py-16 sm:py-20 bg-slate-50/70 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            badge="The Clinic Difference"
-            title="How We Are Different"
-            subtitle="We design your care to resolve underlying musculoskeletal deficits, not merely silence immediate symptoms."
+            badge={difference?.eyebrow || ''}
+            title={difference?.title || ''}
+            subtitle={difference?.description || ''}
             align="center"
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                title: 'Private Suites',
-                desc: 'Comfortable, quiet consultation rooms with acoustic privacy for thorough conversations and dignified care.',
-                icon: Building2,
-              },
-              {
-                title: 'Functional Rehab Gym',
-                desc: 'Our integrated gym floor bridges the gap between passive therapy and return to high-demand sport or work.',
-                icon: Sparkles,
-              },
-              {
-                title: 'Objective Testing',
-                desc: 'Dynamometry, force plates, and video gait analysis provide transparent recovery benchmarks at every milestone.',
-                icon: ShieldCheck,
-              },
-              {
-                title: 'No Referral Needed',
-                desc: 'Private patients can book directly without waiting for a doctor referral. Instant HICAPS rebate processing.',
-                icon: Heart,
-              },
-            ].map((item, i) => (
+            {difference?.items?.map((item) => {
+              const Icon = aboutIcons[item.icon as keyof typeof aboutIcons] || ShieldCheck;
+              return (
               <div
-                key={i}
+                key={item.key}
                 className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-2xs hover:shadow-md transition-shadow"
               >
                 <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-                  <item.icon className="w-6 h-6" />
+                  <Icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-[#0f2330] font-heading">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">{item.desc}</p>
+                <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">{item.description}</p>
               </div>
-            ))}
+            )})}
           </div>
         </div>
       </section>
@@ -163,9 +135,9 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
       <section id="team" className="py-16 sm:py-20 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            badge="Practitioners"
-            title="Our Dedicated Clinical Team"
-            subtitle="Meet our university-trained physiotherapists and accredited exercise physiologists."
+            badge={team?.eyebrow || ''}
+            title={team?.title || ''}
+            subtitle={team?.description || ''}
             align="center"
           />
 
@@ -186,14 +158,14 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
             <div>
-              <span className="text-xs font-bold text-emerald-700 uppercase font-mono">Our Facilities</span>
-              <h2 className="text-3xl font-bold text-[#0f2330] font-heading mt-1">Designed for Healing &amp; Movement</h2>
+              <span className="text-xs font-bold text-emerald-700 uppercase font-mono">{facilities?.eyebrow}</span>
+              <h2 className="text-3xl font-bold text-[#0f2330] font-heading mt-1">{facilities?.title}</h2>
             </div>
             <button
               onClick={() => onNavigate('/gallery')}
               className="text-xs uppercase tracking-wider font-bold text-emerald-800 hover:text-emerald-950 inline-flex items-center gap-1.5"
             >
-              <span>View Full Photo Gallery</span>
+              <span>{facilities?.ctaLabel}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -222,10 +194,10 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
       <section className="py-16 bg-[#0f2330] text-white">
         <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold font-heading tracking-tight text-white">
-            Experience the Swastik Healthcare Difference
+            {cta?.title}
           </h2>
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-            Book an initial assessment with one of our senior physiotherapists. We look forward to welcoming you to our clinic.
+            {cta?.description}
           </p>
           <div className="pt-2">
             <button
@@ -233,7 +205,7 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
               className="px-8 py-3.5 rounded-full text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
             >
               <Calendar className="w-4 h-4" />
-              <span>Book Your Consultation</span>
+              <span>{cta?.ctaLabel}</span>
             </button>
           </div>
         </div>

@@ -22,12 +22,14 @@ export const TreatmentCard: React.FC<TreatmentCardProps> = ({ treatment, onSelec
     <div className="group bg-white rounded-2xl border border-slate-200/90 hover:border-emerald-300 hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
       {/* Top Image Preview with Category Badge */}
       <div className="relative h-48 w-full overflow-hidden bg-slate-100">
-        <img
-          src={treatment.heroImage}
-          alt={treatment.title}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
+        {treatment.heroImage && (
+          <img
+            src={treatment.heroImage}
+            alt={treatment.heroImageAlt || treatment.title}
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
         <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-[11px] font-bold text-slate-800 shadow-sm flex items-center gap-1.5">
           {iconMap[treatment.iconName] || <Activity className="w-3.5 h-3.5 text-emerald-600" />}

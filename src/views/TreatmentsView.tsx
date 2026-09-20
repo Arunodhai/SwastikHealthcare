@@ -3,6 +3,8 @@ import { TREATMENTS as FALLBACK_TREATMENTS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 import { TreatmentCard } from '../components/TreatmentCard';
 import { Sparkles, Filter } from 'lucide-react';
+import { PageHero } from '../components/PageHero';
+import { getManagedPage, getManagedSection } from '../data/pageContent';
 
 interface TreatmentsViewProps {
   onNavigate: (path: string) => void;
@@ -10,18 +12,13 @@ interface TreatmentsViewProps {
 }
 
 export const TreatmentsView: React.FC<TreatmentsViewProps> = ({ onNavigate, onOpenBooking }) => {
-  const { treatments: clinicTreatments } = useClinic();
+  const { treatments: clinicTreatments, settings } = useClinic();
   const treatments = clinicTreatments || FALLBACK_TREATMENTS;
+  const page = getManagedPage(settings, 'treatments');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const categories = [
-    { id: 'all', label: 'All Services' },
-    { id: 'sports', label: 'Sports & Performance' },
-    { id: 'spine', label: 'Spine & Posture' },
-    { id: 'rehabilitation', label: 'Rehabilitation' },
-    { id: 'manual', label: 'Manual Therapy' },
-    { id: 'specialized', label: 'Specialized' },
-  ];
+  const categories = (page.filters || []).map((item) => ({ id: item.key, label: item.label || item.key }));
+  const emptySection = getManagedSection(page, 'empty');
 
   const filteredTreatments = selectedCategory === 'all'
     ? treatments
@@ -29,26 +26,19 @@ export const TreatmentsView: React.FC<TreatmentsViewProps> = ({ onNavigate, onOp
 
   return (
     <div className="bg-white">
-      {/* Header Banner */}
-      <section className="bg-gradient-to-b from-slate-50 to-white pt-12 pb-14 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Evidence-Based Clinical Services</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#0f2330] font-heading leading-tight">
-              Physiotherapy Treatments &amp; Services
-            </h1>
-
-            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-              Every body is unique. We combine hands-on manual techniques, targeted exercise prescription, and progressive physical loading to deliver measurable recovery.
-            </p>
+      <PageHero
+        imageSrc={page.heroImageUrl || ''}
+        imageAlt={page.heroImageAlt || ''}
+        badge={(
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold tracking-wide text-emerald-800">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>{page.heroBadge}</span>
           </div>
-
-          {/* Filter Tabs */}
-          <div className="mt-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        )}
+        title={page.heroTitle}
+        description={page.heroDescription}
+      >
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             <Filter className="w-4 h-4 text-slate-400 shrink-0 mr-1 hidden sm:block" />
             {categories.map((cat) => (
               <button
@@ -64,8 +54,7 @@ export const TreatmentsView: React.FC<TreatmentsViewProps> = ({ onNavigate, onOp
               </button>
             ))}
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Treatments Grid */}
       <section className="py-16 border-b border-slate-100">
@@ -83,7 +72,7 @@ export const TreatmentsView: React.FC<TreatmentsViewProps> = ({ onNavigate, onOp
 
           {filteredTreatments.length === 0 && (
             <div className="text-center py-16 bg-slate-50 rounded-2xl">
-              <p className="text-slate-500 text-sm">No treatments currently found under this category.</p>
+              <p className="text-slate-500 text-sm">{emptySection?.description}</p>
             </div>
           )}
         </div>

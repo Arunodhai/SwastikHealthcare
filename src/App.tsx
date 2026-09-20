@@ -15,6 +15,33 @@ import { ContactView } from './views/ContactView';
 import { CustomPageView } from './views/CustomPageView';
 import { StudioView } from './views/StudioView';
 
+const DEFAULT_TITLE = 'Swastik Healthcare | Physiotherapy & Rehabilitation Clinic';
+const DEFAULT_DESCRIPTION = 'Physiotherapy and rehabilitation care focused on restoring mobility, reducing pain and supporting lasting recovery.';
+
+function setMetaTag(selector: string, attribute: 'name' | 'property', key: string, content?: string) {
+  let element = document.head.querySelector<HTMLMetaElement>(selector);
+  if (!content) {
+    element?.remove();
+    return;
+  }
+  if (!element) {
+    element = document.createElement('meta');
+    element.setAttribute(attribute, key);
+    document.head.appendChild(element);
+  }
+  element.content = content;
+}
+
+function setCanonicalUrl(url: string) {
+  let element = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  if (!element) {
+    element = document.createElement('link');
+    element.rel = 'canonical';
+    document.head.appendChild(element);
+  }
+  element.href = url;
+}
+
 function getInitialPath(): string {
   if (typeof window !== 'undefined') {
     const hash = window.location.hash.replace(/^#/, '');
@@ -52,7 +79,11 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    let title = 'Swastik Healthcare | Physiotherapy & Rehabilitation Clinic';
+    let title = DEFAULT_TITLE;
+    let description = DEFAULT_DESCRIPTION;
+    let socialImage: string | undefined;
+    let noIndex = currentPath.startsWith('/studio');
+
     if (currentPath === '/about') {
       title = 'About Us | Swastik Healthcare';
     } else if (currentPath === '/treatments') {
@@ -74,11 +105,28 @@ function AppContent() {
     } else if (currentPath.startsWith('/pages/')) {
       const slug = currentPath.replace('/pages/', '');
       const foundPage = customPages.find(p => p.slug === slug);
-      title = foundPage ? `${foundPage.title} | Swastik Healthcare` : 'Clinic Services | Swastik Healthcare';
-    } else if (currentPath === '/studio') {
+      title = foundPage?.metaTitle || (foundPage ? `${foundPage.title} | Swastik Healthcare` : 'Clinic Services | Swastik Healthcare');
+      description = foundPage?.metaDescription || foundPage?.leadText || DEFAULT_DESCRIPTION;
+      socialImage = foundPage?.seoImage || foundPage?.bannerImage;
+      noIndex = foundPage?.noIndex ?? false;
+    } else if (currentPath.startsWith('/studio')) {
       title = 'Sanity Studio | Swastik Healthcare';
     }
+
+    const canonicalUrl = `${window.location.origin}${currentPath === '' ? '/' : currentPath}`;
     document.title = title;
+    setCanonicalUrl(canonicalUrl);
+    setMetaTag('meta[name="description"]', 'name', 'description', description);
+    setMetaTag('meta[name="robots"]', 'name', 'robots', noIndex ? 'noindex, nofollow' : 'index, follow');
+    setMetaTag('meta[property="og:type"]', 'property', 'og:type', 'website');
+    setMetaTag('meta[property="og:title"]', 'property', 'og:title', title);
+    setMetaTag('meta[property="og:description"]', 'property', 'og:description', description);
+    setMetaTag('meta[property="og:url"]', 'property', 'og:url', canonicalUrl);
+    setMetaTag('meta[property="og:image"]', 'property', 'og:image', socialImage);
+    setMetaTag('meta[name="twitter:card"]', 'name', 'twitter:card', socialImage ? 'summary_large_image' : 'summary');
+    setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', title);
+    setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', description);
+    setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', socialImage);
   }, [currentPath, customPages]);
 
   const navigate = (path: string) => {

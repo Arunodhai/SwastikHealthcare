@@ -19,6 +19,7 @@ import {
   GALLERY_ITEMS as DEFAULT_GALLERY_ITEMS,
   CLINIC_LOCATIONS as DEFAULT_CLINIC_LOCATIONS
 } from '../data/clinicData';
+import { DEFAULT_MANAGED_PAGES } from '../data/pageContent';
 
 // Sanity Project Configuration
 export const SANITY_PROJECT_ID = import.meta.env.VITE_SANITY_PROJECT_ID || '41uk25bi';
@@ -95,7 +96,17 @@ export async function fetchSanityClinicData() {
   try {
     // Run GROQ batch query against Sanity CMS
     const data = await sanityClient.fetch(`{
-      "settings": *[_id == "clinicSettings-singleton"][0],
+      "settings": *[_id == "clinicSettings-singleton"][0]{
+        ...,
+        navbarPages[]{
+          ...,
+          "heroImageUrl": heroImage.asset->url,
+          sections[]{
+            ...,
+            "imageUrl": image.asset->url
+          }
+        }
+      },
       "treatments": *[_type == "treatment"] | order(order asc, title asc),
       "conditions": *[_type == "condition"] | order(order asc, title asc),
       "teamMembers": *[_type == "teamMember"] | order(order asc, experienceYears desc),
@@ -158,63 +169,67 @@ export async function fetchSanityClinicData() {
         };
       }
 
-      if (sanityTreatments.length > 0) {
-        result.treatments = sanityTreatments.map((t: any, idx: number) => ({
+      result.treatments = sanityTreatments.map((t: any, idx: number) => ({
           ...t,
           id: t._id || t.id || t.slug?.current || `treatment-${idx}`,
           slug: t.slug?.current || t.slug || t._id || t.id,
-          heroImage: t.heroImage?.asset ? urlFor(t.heroImage).auto('format').width(1200).url() : (t.heroImage || DEFAULT_TREATMENTS[0].heroImage),
+          heroImage: t.heroImage?.asset ? urlFor(t.heroImage).auto('format').width(1200).url() : undefined,
+          suitableFor: Array.isArray(t.suitableFor) ? t.suitableFor : [],
+          benefits: Array.isArray(t.benefits) ? t.benefits : [],
+          approachSteps: Array.isArray(t.approachSteps) ? t.approachSteps : [],
+          faqs: Array.isArray(t.faqs) ? t.faqs : [],
+          relatedConditionSlugs: Array.isArray(t.relatedConditionSlugs) ? t.relatedConditionSlugs : [],
         }));
-      }
 
-      if (sanityConditions.length > 0) {
-        result.conditions = sanityConditions.map((c: any, idx: number) => ({
+      result.conditions = sanityConditions.map((c: any, idx: number) => ({
           ...c,
           id: c._id || c.id || c.slug?.current || `condition-${idx}`,
           slug: c.slug?.current || c.slug || c._id || c.id,
-          image: c.image?.asset ? urlFor(c.image).auto('format').width(1000).url() : (c.image || DEFAULT_CONDITIONS[0].image),
+          image: c.image?.asset ? urlFor(c.image).auto('format').width(1000).url() : undefined,
+          commonSymptoms: Array.isArray(c.commonSymptoms) ? c.commonSymptoms : [],
+          possibleCauses: Array.isArray(c.possibleCauses) ? c.possibleCauses : [],
+          physioApproach: Array.isArray(c.physioApproach) ? c.physioApproach : [],
+          relatedTreatmentSlugs: Array.isArray(c.relatedTreatmentSlugs) ? c.relatedTreatmentSlugs : [],
         }));
-      }
 
-      if (sanityTeam.length > 0) {
-        result.teamMembers = sanityTeam.map((m: any, idx: number) => ({
+      result.teamMembers = sanityTeam.map((m: any, idx: number) => ({
           ...m,
           id: m._id || m.id || `team-${idx}`,
-          photo: m.photo?.asset ? urlFor(m.photo).auto('format').width(600).url() : (m.photo || DEFAULT_TEAM_MEMBERS[0].photo),
+          photo: m.photo?.asset ? urlFor(m.photo).auto('format').width(600).url() : undefined,
         }));
-      }
 
-      if (sanityTestimonials.length > 0) {
-        result.testimonials = sanityTestimonials.map((t: any, idx: number) => ({
+      result.testimonials = sanityTestimonials.map((t: any, idx: number) => ({
           ...t,
           id: t._id || t.id || `testimonial-${idx}`,
         }));
-      }
 
-      if (sanityGallery.length > 0) {
-        result.galleryItems = sanityGallery.map((g: any, idx: number) => ({
+      result.galleryItems = sanityGallery.map((g: any, idx: number) => ({
           ...g,
           id: g._id || g.id || `gallery-${idx}`,
-          image: g.image?.asset ? urlFor(g.image).auto('format').width(1000).url() : (g.image || DEFAULT_GALLERY_ITEMS[0].image),
+          image: g.image?.asset ? urlFor(g.image).auto('format').width(1000).url() : undefined,
         }));
-      }
 
-      if (sanityLocations.length > 0) {
-        result.locations = sanityLocations.map((l: any, idx: number) => ({
+      result.locations = sanityLocations.map((l: any, idx: number) => ({
           ...l,
           id: l._id || l.id || `location-${idx}`,
           slug: l.slug?.current || l.slug || l._id || l.id,
         }));
-      }
 
-      if (sanityCustomPages.length > 0) {
-        result.customPages = sanityCustomPages.map((p: any, idx: number) => ({
+      result.customPages = sanityCustomPages.map((p: any, idx: number) => ({
           ...p,
           id: p._id || p.id || `custom-page-${idx}`,
           slug: p.slug?.current || p.slug || p._id || p.id,
           bannerImage: p.bannerImage?.asset ? urlFor(p.bannerImage).auto('format').width(1600).url() : p.bannerImage,
+          seoImage: p.seoImage?.asset ? urlFor(p.seoImage).auto('format').width(1200).height(630).fit('crop').url() : p.seoImage,
+          sections: Array.isArray(p.sections)
+            ? p.sections.map((section: any) => ({
+                ...section,
+                image: section.image?.asset
+                  ? urlFor(section.image).auto('format').width(1200).url()
+                  : section.image,
+              }))
+            : [],
         }));
-      }
 
       result.status.itemCounts = {
         treatments: sanityTreatments.length,
@@ -227,7 +242,14 @@ export async function fetchSanityClinicData() {
       };
     } else {
       result.status.hasCustomContent = false;
-      result.status.isUsingFallback = true;
+      result.status.isUsingFallback = false;
+      result.treatments = [];
+      result.conditions = [];
+      result.teamMembers = [];
+      result.testimonials = [];
+      result.galleryItems = [];
+      result.locations = [];
+      result.customPages = [];
       result.status.itemCounts = {
         treatments: 0,
         conditions: 0,
@@ -272,6 +294,19 @@ export async function seedSanityDataset(token: string) {
     }));
   };
 
+  const navbarPages = Object.values(DEFAULT_MANAGED_PAGES).map((page) => ({
+    ...page,
+    _key: `page_${page.pageKey}`,
+    heroImageUrl: undefined,
+    sections: page.sections?.map((section) => ({
+      ...section,
+      _key: `${page.pageKey}_${section.key}`,
+      imageUrl: undefined,
+      items: section.items?.map((item) => ({ ...item, _key: `${page.pageKey}_${section.key}_${item.key}` })),
+    })),
+    filters: page.filters?.map((filter) => ({ ...filter, _key: `${page.pageKey}_filter_${filter.key}` })),
+  }));
+
   // 1. Clinic Settings Document
   transaction.createOrReplace({
     _id: 'clinicSettings-singleton',
@@ -289,6 +324,7 @@ export async function seedSanityDataset(token: string) {
     address: DEFAULT_CLINIC_SETTINGS.address,
     openingHours: withKeys(DEFAULT_CLINIC_SETTINGS.openingHours, 'hours'),
     howItWorks: withKeys(DEFAULT_CLINIC_SETTINGS.howItWorks, 'work'),
+    navbarPages,
   });
 
   // 2. Treatments

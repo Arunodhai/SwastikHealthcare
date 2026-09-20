@@ -5,7 +5,8 @@ export interface Treatment {
   category: 'sports' | 'spine' | 'rehabilitation' | 'manual' | 'specialized';
   categoryLabel: string;
   shortDescription: string;
-  heroImage: string;
+  heroImage?: string;
+  heroImageAlt?: string;
   iconName: string;
   durationMinutes: number;
   sessionSubtitle?: string;
@@ -23,6 +24,19 @@ export interface Treatment {
     question: string;
     answer: string;
   }[];
+  detailPageCopy?: {
+    primaryCtaLabel?: string;
+    secondaryCtaLabel?: string;
+    rebateBadge?: string;
+    suitableForHeading?: string;
+    benefitsHeading?: string;
+    approachHeading?: string;
+    approachIntro?: string;
+    faqHeading?: string;
+    bookingEyebrow?: string;
+    sidebarCtaLabel?: string;
+    relatedConditionsHeading?: string;
+  };
 }
 
 export interface Condition {
@@ -32,7 +46,8 @@ export interface Condition {
   bodyArea: 'spine' | 'upper-limb' | 'lower-limb' | 'general';
   bodyAreaLabel: string;
   shortDescription: string;
-  image: string;
+  image?: string;
+  imageAlt?: string;
   overview: string;
   commonSymptoms: string[];
   possibleCauses: string[];
@@ -42,6 +57,17 @@ export interface Condition {
   actionSubtitle?: string;
   rebateNote?: string;
   relatedTreatmentSlugs: string[];
+  detailPageCopy?: {
+    heroHighlights?: string[];
+    primaryCtaLabel?: string;
+    symptomsHeading?: string;
+    causesHeading?: string;
+    approachHeading?: string;
+    approachIntro?: string;
+    medicalNotice?: string;
+    sidebarCtaLabel?: string;
+    relatedTreatmentsHeading?: string;
+  };
 }
 
 export interface TeamMember {
@@ -91,7 +117,11 @@ export interface ClinicLocationItem {
 
 export interface CustomPageSection {
   heading?: string;
+  richContent?: any[];
   content?: string;
+  image?: string;
+  imageAlt?: string;
+  imagePosition?: 'left' | 'right' | 'full';
   keyPoints?: string[];
   callToActionText?: string;
   callToActionLink?: string;
@@ -107,8 +137,42 @@ export interface CustomPage {
   sections?: CustomPageSection[];
   metaTitle?: string;
   metaDescription?: string;
+  seoImage?: string;
+  noIndex?: boolean;
   showInNav?: boolean;
   order?: number;
+}
+
+export interface ManagedPageItem {
+  key: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  value?: string;
+  icon?: string;
+}
+
+export interface ManagedPageSection {
+  key: string;
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+  body?: string[];
+  imageUrl?: string;
+  imageAlt?: string;
+  ctaLabel?: string;
+  items?: ManagedPageItem[];
+}
+
+export interface ManagedPage {
+  pageKey: 'about' | 'treatments' | 'conditions' | 'gallery' | 'contact';
+  heroBadge?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  heroImageUrl?: string;
+  heroImageAlt?: string;
+  filters?: ManagedPageItem[];
+  sections?: ManagedPageSection[];
 }
 
 export interface ClinicSettings {
@@ -180,6 +244,7 @@ export interface ClinicSettings {
     instagram?: string;
     linkedin?: string;
   };
+  navbarPages?: ManagedPage[];
 }
 
 export interface AppointmentFormData {

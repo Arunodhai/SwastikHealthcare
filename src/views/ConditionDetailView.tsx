@@ -9,7 +9,6 @@ import {
   ArrowRight,
   HelpCircle 
 } from 'lucide-react';
-import { CONDITIONS as FALLBACK_CONDITIONS, TREATMENTS as FALLBACK_TREATMENTS, CLINIC_SETTINGS as FALLBACK_SETTINGS } from '../data/clinicData';
 import { useClinic } from '../context/ClinicContext';
 
 interface ConditionDetailViewProps {
@@ -23,12 +22,27 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
   onNavigate,
   onOpenBooking,
 }) => {
-  const { conditions: clinicConditions, treatments: clinicTreatments, settings: clinicSettings } = useClinic();
-  const conditions = clinicConditions || FALLBACK_CONDITIONS;
-  const treatments = clinicTreatments || FALLBACK_TREATMENTS;
-  const settings = clinicSettings || FALLBACK_SETTINGS;
+  const { conditions, treatments, settings, isLoading } = useClinic();
+  const condition = conditions.find((item) => item.slug === slug);
 
-  const condition = conditions.find((c) => c.slug === slug) || conditions[0] || FALLBACK_CONDITIONS[0];
+  if (isLoading) {
+    return <div className="min-h-[60vh] bg-white" aria-label="Loading condition" />;
+  }
+
+  if (!condition) {
+    return (
+      <section className="min-h-[60vh] bg-white flex items-center justify-center px-4 text-center">
+        <div className="space-y-4">
+          <h1 className="text-3xl font-bold text-[#0f2330] font-heading">Condition not found</h1>
+          <button onClick={() => onNavigate('/conditions')} className="text-sm font-bold text-emerald-700 hover:underline">
+            Return to all conditions
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  const pageCopy = condition.detailPageCopy;
 
   const relatedTreatments = treatments.filter((t) =>
     condition.relatedTreatmentSlugs?.includes(t.slug)
@@ -66,7 +80,7 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
-            <div className="lg:col-span-7 space-y-4">
+            <div className={`${condition.image ? 'lg:col-span-7' : 'lg:col-span-12'} space-y-4`}>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
                 <Activity className="w-3.5 h-3.5 text-emerald-600" />
                 <span>{condition.bodyAreaLabel} Area</span>
@@ -80,35 +94,36 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
                 {condition.overview}
               </p>
 
-              <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-600">
-                <span className="bg-slate-100 px-3 py-1.5 rounded-lg font-medium text-slate-800">
-                  Non-Surgical Focus
-                </span>
-                <span className="bg-slate-100 px-3 py-1.5 rounded-lg font-medium text-slate-800">
-                  Individualized Recovery Plan
-                </span>
-              </div>
+              {pageCopy?.heroHighlights && pageCopy.heroHighlights.length > 0 && (
+                <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                  {pageCopy.heroHighlights.map((highlight) => (
+                    <span key={highlight} className="bg-slate-100 px-3 py-1.5 rounded-lg font-medium text-slate-800">
+                      {highlight}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               <div className="pt-4 flex flex-wrap items-center gap-3">
-                <button
+                {pageCopy?.primaryCtaLabel && <button
                   onClick={onOpenBooking}
                   className="px-6 py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
                 >
                   <Calendar className="w-4 h-4" />
-                  <span>Book Initial Assessment</span>
-                </button>
+                  <span>{pageCopy?.primaryCtaLabel}</span>
+                </button>}
               </div>
             </div>
 
-            <div className="lg:col-span-5">
+            {condition.image && <div className="lg:col-span-5">
               <div className="rounded-3xl overflow-hidden shadow-xl border border-slate-200">
                 <img
                   src={condition.image}
-                  alt={condition.title}
+                  alt={condition.imageAlt || condition.title}
                   className="w-full h-80 sm:h-96 object-cover"
                 />
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       </section>
@@ -122,10 +137,10 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
             <div className="lg:col-span-8 space-y-12">
               
               {/* Common Symptoms */}
-              <div>
+              {condition.commonSymptoms.length > 0 && <div>
                 <h2 className="text-2xl font-bold text-[#0f2330] font-heading mb-4 flex items-center gap-2">
                   <AlertCircle className="w-5 h-5 text-emerald-700" />
-                  <span>Common Symptoms &amp; Presentation</span>
+                  <span>{pageCopy?.symptomsHeading}</span>
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -141,13 +156,13 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
+              </div>}
 
               {/* Possible Causes & Risk Factors */}
-              <div>
+              {condition.possibleCauses.length > 0 && <div>
                 <h2 className="text-2xl font-bold text-[#0f2330] font-heading mb-4 flex items-center gap-2">
                   <HelpCircle className="w-5 h-5 text-emerald-700" />
-                  <span>Underlying Drivers &amp; Risk Factors</span>
+                  <span>{pageCopy?.causesHeading}</span>
                 </h2>
 
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 space-y-3">
@@ -160,17 +175,15 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
+              </div>}
 
               {/* How Physiotherapy Helps */}
-              <div>
+              {condition.physioApproach.length > 0 && <div>
                 <h2 className="text-2xl font-bold text-[#0f2330] font-heading mb-2 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-700" />
-                  <span>How Physiotherapy Supports Recovery</span>
+                  <span>{pageCopy?.approachHeading}</span>
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500 mb-6">
-                  Evidence-based, active interventions aimed at restoring joint kinematics, reducing tissue overload, and building capacity.
-                </p>
+                {pageCopy?.approachIntro && <p className="text-xs sm:text-sm text-slate-500 mb-6">{pageCopy.approachIntro}</p>}
 
                 <div className="space-y-4">
                   {condition.physioApproach.map((approach, i) => (
@@ -185,12 +198,14 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
                     </div>
                   ))}
                 </div>
-              </div>
+              </div>}
 
               {/* Medical Note */}
-              <div className="p-4 rounded-xl bg-slate-100/80 border border-slate-200 text-xs text-slate-600 leading-relaxed">
-                <strong>Medical Notice:</strong> Information on this website is for educational purposes and should not replace formal in-person clinical assessment. Recovery rates vary depending on injury severity, tissue healing timelines, and individual adherence.
-              </div>
+              {pageCopy?.medicalNotice && (
+                <div className="p-4 rounded-xl bg-slate-100/80 border border-slate-200 text-xs text-slate-600 leading-relaxed">
+                  <strong>Medical Notice:</strong> {pageCopy.medicalNotice}
+                </div>
+              )}
             </div>
 
             {/* Right Column: Recommended Treatments & Booking */}
@@ -220,7 +235,7 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
                   className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2"
                 >
                   <Calendar className="w-4 h-4 text-[#0f2330]" />
-                  <span>Book Initial Assessment</span>
+                  <span>{pageCopy?.sidebarCtaLabel}</span>
                 </button>
 
                 <div className="pt-2 text-xs text-slate-500 space-y-1 text-center">
@@ -237,7 +252,7 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
               {relatedTreatments.length > 0 && (
                 <div className="bg-slate-50 rounded-2xl border border-slate-200/80 p-6 space-y-4">
                   <h4 className="text-sm font-bold text-[#0f2330] font-heading uppercase tracking-wide">
-                    Recommended Treatments
+                    {pageCopy?.relatedTreatmentsHeading}
                   </h4>
                   <div className="space-y-2.5">
                     {relatedTreatments.map((treatment) => (
