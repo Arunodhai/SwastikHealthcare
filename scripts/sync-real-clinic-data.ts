@@ -69,12 +69,27 @@ async function main() {
   for (const settings of settingsDocuments) {
     const navbarPages = (settings.navbarPages || []).map((page: any) => ({
       ...page,
+      heroBadge: page.pageKey === 'about'
+        ? 'About Swastik Healthcare'
+        : page.heroBadge,
+      heroTitle: page.pageKey === 'about'
+        ? 'Mission Wellness Across Kollam.'
+        : page.heroTitle,
       heroDescription: page.pageKey === 'gallery'
         ? 'General physiotherapy and rehabilitation visuals used across the website. Every image can be replaced in Sanity Studio.'
         : page.heroDescription,
       heroImage: pageHeroAssets[page.pageKey] ? image(pageHeroAssets[page.pageKey]) : page.heroImage,
       sections: (page.sections || []).map((section: any) => ({
         ...section,
+        title: page.pageKey === 'about' && section.key === 'story'
+          ? 'A Clinic Built Around Recovery.'
+          : section.title,
+        body: page.pageKey === 'about' && section.key === 'story'
+          ? [
+              'Established in 2009, Swastik Healthcare provides physiotherapy and rehabilitation services under the motto “Mission Wellness.”',
+              'Led by Founder & Chief Physiotherapist Dr. Ajay Ghosh J. (PT), MPT (Ortho & Sports Medicine), the clinic supports children, adults, athletes, and senior citizens.',
+            ]
+          : section.body,
         image: page.pageKey === 'about' && section.key === 'story'
           ? image('image-a3cb0f6a4bb8f1017ffa6c40b9c31e51a25f112c-1150x1368-png')
           : section.image,

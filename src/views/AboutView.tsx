@@ -1,16 +1,14 @@
 import React from 'react';
-import { 
-  ShieldCheck, 
-  Heart, 
-  Building2, 
-  Sparkles, 
+import {
+  ShieldCheck,
+  Heart,
+  Building2,
+  Sparkles,
   Calendar,
-  ArrowRight
+  Award,
 } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
 import { SectionHeading } from '../components/SectionHeading';
-import { TeamCard } from '../components/TeamCard';
-import { SwastikEmblem } from '../components/SwastikLogo';
 import { PageHero } from '../components/PageHero';
 import { getManagedPage, getManagedSection } from '../data/pageContent';
 
@@ -21,86 +19,134 @@ interface AboutViewProps {
   onOpenBooking: () => void;
 }
 
-export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking }) => {
-  const { teamMembers: clinicTeamMembers, galleryItems: clinicGallery, settings } = useClinic();
-  const teamMembers = clinicTeamMembers;
-  const galleryItems = clinicGallery;
+export const AboutView: React.FC<AboutViewProps> = ({ onOpenBooking }) => {
+  const { teamMembers, settings } = useClinic();
   const page = getManagedPage(settings, 'about');
   const story = getManagedSection(page, 'story');
-  const certification = getManagedSection(page, 'certification');
   const difference = getManagedSection(page, 'difference');
   const team = getManagedSection(page, 'team');
-  const facilities = getManagedSection(page, 'facilities');
-  const cta = getManagedSection(page, 'cta');
+  const founder = teamMembers[0];
 
   return (
     <div className="bg-white">
       <PageHero
-        imageSrc={page.heroImageUrl || ''}
+        imageSrc={page.heroImageUrl}
         imageAlt={page.heroImageAlt || ''}
-        badge={(
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-blue-200 bg-blue-50 px-3.5 py-1.5 text-xs font-bold tracking-wide text-blue-900">
-            <SwastikEmblem className="h-5 w-5 rounded-full" />
-            <span>{page.heroBadge}</span>
+        badge={page.heroBadge ? (
+          <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1.5 text-xs font-bold tracking-wide text-emerald-900">
+            {page.heroBadge}
           </div>
-        )}
+        ) : null}
         title={page.heroTitle}
         description={page.heroDescription}
       />
 
-      {/* Clinic Story & Treatment Philosophy */}
+      {/* One concise clinic story: narrative on the left, evidence on the right. */}
       <section className="py-16 sm:py-20 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs font-bold text-blue-700 tracking-wider uppercase font-mono">
-                {story?.eyebrow}
-              </span>
-
-              <h2 className="text-3xl font-extrabold text-[#0f2330] font-heading tracking-tight leading-tight">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+            <div className="lg:col-span-7">
+              {story?.eyebrow && (
+                <span className="text-xs font-bold text-emerald-700 tracking-wider uppercase font-mono">
+                  {story.eyebrow}
+                </span>
+              )}
+              <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-[#0f2330] font-heading tracking-tight leading-tight">
                 {story?.title}
               </h2>
-
-              <div className="space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
+              <div className="mt-6 space-y-4 text-slate-600 text-sm sm:text-base leading-relaxed">
                 {story?.body?.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
-              </div>
-
-              {/* 3 Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-                {story?.items?.map((item) => (
-                  <div key={item.key} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-                    <span className="text-2xl font-bold text-emerald-700 font-heading">{item.value}</span>
-                    <p className="text-xs font-semibold text-slate-800 mt-1">{item.title}</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">{item.description}</p>
-                  </div>
-                ))}
               </div>
             </div>
 
-            <div className="lg:col-span-6">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl border border-slate-200">
-                <img
-                  src={story?.imageUrl}
-                  alt={story?.imageAlt || ''}
-                  className="w-full h-96 sm:h-110 object-cover"
-                />
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-sm p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
-                  <ShieldCheck className="w-8 h-8 text-emerald-600 shrink-0" />
+            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
+              {story?.items?.map((item) => (
+                <div key={item.key} className="rounded-2xl border border-slate-200 bg-slate-50 p-5 flex items-start gap-4">
+                  <span className="min-w-16 text-3xl font-extrabold text-emerald-700 font-heading leading-none">
+                    {item.value}
+                  </span>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900">{certification?.title}</h4>
-                    <p className="text-[11px] text-slate-600">{certification?.description}</p>
+                    <p className="text-sm font-bold text-[#0f2330]">{item.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-500">{item.description}</p>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why We Are Different */}
-      <section className="py-16 sm:py-20 bg-slate-50/70 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* The founder appears once, as a complete leadership profile. */}
+      {founder && (
+        <section id="team" className="py-16 sm:py-20 border-b border-slate-100 bg-slate-50/60 scroll-mt-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {team?.eyebrow && (
+              <div className="mb-5 text-center">
+                <span className="text-xs font-bold text-emerald-700 tracking-wider uppercase font-mono">
+                  {team.eyebrow}
+                </span>
+              </div>
+            )}
+
+            <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <div className="grid md:grid-cols-[340px_1fr] lg:grid-cols-[410px_1fr] items-stretch">
+                <div className="relative min-h-96 bg-[#0f2330]">
+                  {founder.photo ? (
+                    <img
+                      src={founder.photo}
+                      alt={founder.name}
+                      className="absolute inset-0 h-full w-full object-cover object-top"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-slate-200" aria-hidden="true" />
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0f2330]/70 to-transparent" />
+                </div>
+
+                <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+                  <p className="text-xs font-bold uppercase tracking-widest text-emerald-700">
+                    {founder.role}
+                  </p>
+                  <h2 className="mt-2 text-3xl sm:text-4xl font-extrabold text-[#0f2330] font-heading tracking-tight leading-tight">
+                    {founder.name}
+                  </h2>
+                  <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-slate-600">
+                    <Award className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>{founder.qualifications || founder.title}</span>
+                  </div>
+                  {founder.bio && (
+                    <p className="mt-5 max-w-2xl text-sm sm:text-base leading-relaxed text-slate-600">
+                      {founder.bio}
+                    </p>
+                  )}
+                  {(founder.specialization || []).length > 0 && (
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {founder.specialization.map((item) => (
+                        <span key={item} className="rounded-full border border-emerald-200 bg-emerald-50/60 px-3 py-1.5 text-xs font-semibold text-emerald-800">
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {settings.heroPrimaryCtaLabel && <div className="mt-7">
+                    <button
+                      onClick={onOpenBooking}
+                      className="px-6 py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-[#0f2330] hover:bg-[#193b50] text-white inline-flex items-center gap-2 transition-colors"
+                    >
+                      <Calendar className="w-4 h-4 text-lime-400" />
+                      <span>{settings.heroPrimaryCtaLabel}</span>
+                    </button>
+                  </div>}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Care options are retained as the page's single service-model section. */}
+      <section className="py-16 sm:py-20 border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             badge={difference?.eyebrow || ''}
             title={difference?.title || ''}
@@ -108,101 +154,22 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate, onOpenBooking 
             align="center"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {difference?.items?.map((item) => {
               const Icon = aboutIcons[item.icon as keyof typeof aboutIcons] || ShieldCheck;
               return (
-              <div
-                key={item.key}
-                className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-2xs hover:shadow-md transition-shadow"
-              >
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6" />
+                <div
+                  key={item.key}
+                  className="min-h-56 rounded-2xl p-6 border border-slate-200 bg-slate-50 flex flex-col items-start transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-sm"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-emerald-100/70 text-emerald-700 flex items-center justify-center mb-6">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-[#0f2330] font-heading">{item.title}</h3>
+                  <p className="text-sm text-slate-600 mt-2 leading-relaxed">{item.description}</p>
                 </div>
-                <h3 className="text-lg font-bold text-[#0f2330] font-heading">{item.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">{item.description}</p>
-              </div>
-            )})}
-          </div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section id="team" className="py-16 sm:py-20 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeading
-            badge={team?.eyebrow || ''}
-            title={team?.title || ''}
-            subtitle={team?.description || ''}
-            align="center"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {teamMembers.map((member, idx) => (
-              <TeamCard
-                key={member.id || (member as any)._id || `team-member-${idx}`}
-                member={member}
-                onBook={onOpenBooking}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Facility Highlights Tour */}
-      {galleryItems.length > 0 && <section className="py-16 sm:py-20 bg-slate-50/60 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
-            <div>
-              <span className="text-xs font-bold text-emerald-700 uppercase font-mono">{facilities?.eyebrow}</span>
-              <h2 className="text-3xl font-bold text-[#0f2330] font-heading mt-1">{facilities?.title}</h2>
-            </div>
-            <button
-              onClick={() => onNavigate('/gallery')}
-              className="text-xs uppercase tracking-wider font-bold text-emerald-800 hover:text-emerald-950 inline-flex items-center gap-1.5"
-            >
-              <span>{facilities?.ctaLabel}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {galleryItems.slice(0, 3).map((item) => (
-              <div key={item.id} className="group rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-2xs">
-                <div className="relative h-56 overflow-hidden">
-                  {item.image ? <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  /> : <div className="h-full w-full bg-slate-200" aria-hidden="true" />}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-sm text-[#0f2330] font-heading">{item.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{item.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>}
-
-      {/* Final Call to Action */}
-      <section className="py-16 bg-[#0f2330] text-white">
-        <div className="max-w-4xl mx-auto px-4 text-center space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-heading tracking-tight text-white">
-            {cta?.title}
-          </h2>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-            {cta?.description}
-          </p>
-          <div className="pt-2">
-            <button
-              onClick={onOpenBooking}
-              className="px-8 py-3.5 rounded-full text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all transform hover:-translate-y-0.5 active:translate-y-0 inline-flex items-center gap-2"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>{cta?.ctaLabel}</span>
-            </button>
+              );
+            })}
           </div>
         </div>
       </section>
