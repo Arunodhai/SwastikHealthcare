@@ -1,5 +1,5 @@
 import { createClient } from '@sanity/client';
-import imageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 import {
   Treatment,
   Condition,
@@ -10,16 +10,6 @@ import {
   ClinicLocationItem,
   CustomPage
 } from '../types/clinic';
-import {
-  CLINIC_SETTINGS as DEFAULT_CLINIC_SETTINGS,
-  TREATMENTS as DEFAULT_TREATMENTS,
-  CONDITIONS as DEFAULT_CONDITIONS,
-  TEAM_MEMBERS as DEFAULT_TEAM_MEMBERS,
-  TESTIMONIALS as DEFAULT_TESTIMONIALS,
-  GALLERY_ITEMS as DEFAULT_GALLERY_ITEMS,
-  CLINIC_LOCATIONS as DEFAULT_CLINIC_LOCATIONS
-} from '../data/clinicData';
-import { DEFAULT_MANAGED_PAGES } from '../data/pageContent';
 
 // Sanity Project Configuration
 export const SANITY_PROJECT_ID = import.meta.env.VITE_SANITY_PROJECT_ID || '41uk25bi';
@@ -35,7 +25,7 @@ export const sanityClient = createClient({
 });
 
 // Configure image URL builder
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 
 export function urlFor(source: any) {
   return builder.image(source);
@@ -61,31 +51,46 @@ export interface SanityStatus {
   error?: string | null;
 }
 
-// Data Fetching Helper with Graceful Fallback
+const EMPTY_CLINIC_SETTINGS: ClinicSettings = {
+  name: '',
+  tagline: '',
+  phone: '',
+  phoneRaw: '',
+  email: '',
+  address: { street: '', suburb: '', city: '', state: '', postcode: '', full: '' },
+  openingHours: [],
+  whatsappNumber: '',
+  whatsappMessage: '',
+  howItWorks: [],
+  navbarPages: [],
+};
+
+// Sanity is the sole runtime source for clinic content. The empty structure keeps
+// rendering safe during loading or an outage without shipping duplicate clinic data.
 export async function fetchSanityClinicData() {
   const result = {
-    settings: DEFAULT_CLINIC_SETTINGS,
-    treatments: DEFAULT_TREATMENTS,
-    conditions: DEFAULT_CONDITIONS,
-    teamMembers: DEFAULT_TEAM_MEMBERS,
-    testimonials: DEFAULT_TESTIMONIALS,
-    galleryItems: DEFAULT_GALLERY_ITEMS,
-    locations: DEFAULT_CLINIC_LOCATIONS as ClinicLocationItem[],
+    settings: EMPTY_CLINIC_SETTINGS,
+    treatments: [] as Treatment[],
+    conditions: [] as Condition[],
+    teamMembers: [] as TeamMember[],
+    testimonials: [] as Testimonial[],
+    galleryItems: [] as GalleryItem[],
+    locations: [] as ClinicLocationItem[],
     customPages: [] as CustomPage[],
     status: {
       connected: false,
       projectId: SANITY_PROJECT_ID,
       dataset: SANITY_DATASET,
-      isUsingFallback: true,
+      isUsingFallback: false,
       hasCustomContent: false,
       totalSanityDocs: 0,
       itemCounts: {
-        treatments: DEFAULT_TREATMENTS.length,
-        conditions: DEFAULT_CONDITIONS.length,
-        team: DEFAULT_TEAM_MEMBERS.length,
-        testimonials: DEFAULT_TESTIMONIALS.length,
-        gallery: DEFAULT_GALLERY_ITEMS.length,
-        locations: DEFAULT_CLINIC_LOCATIONS.length,
+        treatments: 0,
+        conditions: 0,
+        team: 0,
+        testimonials: 0,
+        gallery: 0,
+        locations: 0,
         customPages: 0,
       },
       lastChecked: new Date().toISOString(),
@@ -256,172 +261,8 @@ export async function fetchSanityClinicData() {
   } catch (err: any) {
     result.status.connected = false;
     result.status.error = err?.message || 'Failed to connect to Sanity dataset';
-    result.status.isUsingFallback = true;
+    result.status.isUsingFallback = false;
   }
 
   return result;
-}
-
-// Utility: Seed baseline clinic content into Sanity dataset via Sanity Write Token
-export async function seedSanityDataset(token: string) {
-  if (!token || !token.trim()) {
-    throw new Error('A valid Sanity write token is required.');
-  }
-
-  const writeClient = createClient({
-    projectId: SANITY_PROJECT_ID,
-    dataset: SANITY_DATASET,
-    apiVersion: SANITY_API_VERSION,
-    token: token.trim(),
-    useCdn: false,
-  });
-
-  const transaction = writeClient.transaction();
-
-  // Helper to ensure each array item has a unique _key for Sanity
-  const withKeys = (arr: any[] | undefined, prefix: string) => {
-    if (!Array.isArray(arr)) return arr;
-    return arr.map((item, idx) => ({
-      ...item,
-      _key: item._key || `${prefix}_${idx + 1}_${Math.random().toString(36).substring(2, 7)}`,
-    }));
-  };
-
-  const navbarPages = Object.values(DEFAULT_MANAGED_PAGES).map((page) => ({
-    ...page,
-    _key: `page_${page.pageKey}`,
-    heroImageUrl: undefined,
-    sections: page.sections?.map((section) => ({
-      ...section,
-      _key: `${page.pageKey}_${section.key}`,
-      imageUrl: undefined,
-      items: section.items?.map((item) => ({ ...item, _key: `${page.pageKey}_${section.key}_${item.key}` })),
-    })),
-    filters: page.filters?.map((filter) => ({ ...filter, _key: `${page.pageKey}_filter_${filter.key}` })),
-  }));
-
-  // 1. Clinic Settings Document
-  transaction.createOrReplace({
-    _id: 'clinicSettings-singleton',
-    _type: 'clinicSettings',
-    name: DEFAULT_CLINIC_SETTINGS.name,
-    tagline: DEFAULT_CLINIC_SETTINGS.tagline,
-    foundedYear: '2009',
-    heroEyebrow: 'Trusted Care Since 2009',
-    heroTitle: DEFAULT_CLINIC_SETTINGS.heroTitle,
-    heroSubtitle: DEFAULT_CLINIC_SETTINGS.heroSubtitle,
-    phone: DEFAULT_CLINIC_SETTINGS.phone,
-    phoneRaw: DEFAULT_CLINIC_SETTINGS.phoneRaw,
-    email: DEFAULT_CLINIC_SETTINGS.email,
-    whatsappNumber: DEFAULT_CLINIC_SETTINGS.whatsappNumber,
-    address: DEFAULT_CLINIC_SETTINGS.address,
-    openingHours: withKeys(DEFAULT_CLINIC_SETTINGS.openingHours, 'hours'),
-    howItWorks: withKeys(DEFAULT_CLINIC_SETTINGS.howItWorks, 'work'),
-    healthFunds: withKeys(DEFAULT_CLINIC_SETTINGS.healthFunds, 'services'),
-    trustHighlights: withKeys(DEFAULT_CLINIC_SETTINGS.trustHighlights, 'trust'),
-    consultationBenefits: DEFAULT_CLINIC_SETTINGS.consultationBenefits,
-    uiCopy: DEFAULT_CLINIC_SETTINGS.uiCopy,
-    navbarPages,
-  });
-
-  // 2. Treatments
-  DEFAULT_TREATMENTS.forEach((t, i) => {
-    transaction.createOrReplace({
-      _id: `treatment-${t.slug}`,
-      _type: 'treatment',
-      title: t.title,
-      slug: { _type: 'slug', current: t.slug },
-      category: t.category,
-      categoryLabel: t.categoryLabel,
-      shortDescription: t.shortDescription,
-      durationMinutes: t.durationMinutes,
-      suitableFor: t.suitableFor,
-      benefits: t.benefits,
-      approachSteps: withKeys(t.approachSteps, `step_${t.slug}`),
-      relatedConditionSlugs: t.relatedConditionSlugs,
-      faqs: withKeys(t.faqs, `faq_${t.slug}`),
-      order: i + 1,
-    });
-  });
-
-  // 3. Conditions
-  DEFAULT_CONDITIONS.forEach((c, i) => {
-    transaction.createOrReplace({
-      _id: `condition-${c.slug}`,
-      _type: 'condition',
-      title: c.title,
-      slug: { _type: 'slug', current: c.slug },
-      bodyArea: c.bodyArea,
-      bodyAreaLabel: c.bodyAreaLabel,
-      shortDescription: c.shortDescription,
-      overview: c.overview,
-      commonSymptoms: c.commonSymptoms,
-      possibleCauses: c.possibleCauses,
-      physioApproach: c.physioApproach,
-      relatedTreatmentSlugs: c.relatedTreatmentSlugs,
-      order: i + 1,
-    });
-  });
-
-  // 4. Team Members
-  DEFAULT_TEAM_MEMBERS.forEach((m, i) => {
-    transaction.createOrReplace({
-      _id: `team-${m.id}`,
-      _type: 'teamMember',
-      name: m.name,
-      role: m.role,
-      title: m.title,
-      qualifications: m.qualifications,
-      experienceYears: m.experienceYears,
-      specialization: m.specialization,
-      bio: m.bio,
-      ahpraNumber: m.ahpraNumber,
-      isDirector: m.isDirector || false,
-      order: i + 1,
-    });
-  });
-
-  // 5. Testimonials
-  DEFAULT_TESTIMONIALS.forEach((t, i) => {
-    transaction.createOrReplace({
-      _id: `testimonial-${t.id}`,
-      _type: 'testimonial',
-      name: t.name,
-      conditionTreated: t.conditionTreated,
-      rating: t.rating,
-      review: t.review,
-      verified: t.verified,
-      location: t.location,
-      order: i + 1,
-    });
-  });
-
-  // 6. Locations
-  DEFAULT_CLINIC_LOCATIONS.forEach((loc, i) => {
-    transaction.createOrReplace({
-      _id: `location-${loc.id}`,
-      _type: 'clinicLocation',
-      name: loc.name,
-      slug: { _type: 'slug', current: loc.id },
-      address: loc.address,
-      phone: loc.phone,
-      parking: loc.parking,
-      order: i + 1,
-    });
-  });
-
-  // 7. Gallery Items
-  DEFAULT_GALLERY_ITEMS.forEach((g, i) => {
-    transaction.createOrReplace({
-      _id: `gallery-${g.id}`,
-      _type: 'galleryItem',
-      title: g.title,
-      category: g.category,
-      description: g.description,
-      order: i + 1,
-    });
-  });
-
-  const commitResult = await transaction.commit();
-  return commitResult;
 }

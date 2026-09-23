@@ -12,7 +12,6 @@ import {
 import { 
   fetchSanityClinicData, 
   sanityClient,
-  seedSanityDataset, 
   SanityStatus, 
   SANITY_PROJECT_ID, 
   SANITY_DATASET 
@@ -30,14 +29,13 @@ interface ClinicContextValue {
   sanityStatus: SanityStatus;
   isLoading: boolean;
   refreshSanityData: () => Promise<void>;
-  seedSanity: (token: string) => Promise<any>;
 }
 
 const defaultStatus: SanityStatus = {
   connected: false,
   projectId: SANITY_PROJECT_ID,
   dataset: SANITY_DATASET,
-  isUsingFallback: true,
+  isUsingFallback: false,
   hasCustomContent: false,
   totalSanityDocs: 0,
   itemCounts: {
@@ -78,7 +76,6 @@ const ClinicContext = createContext<ClinicContextValue>({
   sanityStatus: defaultStatus,
   isLoading: false,
   refreshSanityData: async () => {},
-  seedSanity: async () => {},
 });
 
 export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -111,12 +108,6 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleSeedSanity = async (token: string) => {
-    const res = await seedSanityDataset(token);
-    await loadData();
-    return res;
   };
 
   useEffect(() => {
@@ -152,7 +143,6 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         sanityStatus,
         isLoading,
         refreshSanityData: loadData,
-        seedSanity: handleSeedSanity,
       }}
     >
       {children}

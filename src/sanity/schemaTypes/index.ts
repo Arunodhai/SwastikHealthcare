@@ -234,6 +234,7 @@ export const galleryItemSchema = {
         ],
       },
     },
+    { name: 'categoryLabel', title: 'Visible Category Label', type: 'string' },
     { name: 'image', title: 'Photograph', type: 'image', options: { hotspot: true } },
     { name: 'description', title: 'Description', type: 'text', rows: 2 },
     { name: 'order', title: 'Display Order', type: 'number', initialValue: 1 },

@@ -425,10 +425,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                           onChange={(e) => setQuickForm({ ...quickForm, preferredTime: e.target.value })}
                           className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                         >
-                          <option>Anytime Today / Tomorrow</option>
-                          <option>Morning (9:00 AM - 12:00 PM)</option>
-                          <option>Afternoon (12:00 PM - 4:00 PM)</option>
-                          <option>Evening (4:00 PM - 9:00 PM, Chavara &amp; Nellimukku)</option>
+                          <option>Any available time</option>
+                          <option>Morning</option>
+                          <option>Afternoon</option>
+                          <option>Evening</option>
                         </select>
                       </div>
 

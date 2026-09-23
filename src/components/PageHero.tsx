@@ -4,7 +4,7 @@ interface PageHeroProps {
   badge: React.ReactNode;
   title: React.ReactNode;
   description: React.ReactNode;
-  imageSrc: string;
+  imageSrc?: string;
   imageAlt: string;
   children?: React.ReactNode;
   imagePosition?: string;
@@ -21,11 +21,13 @@ export const PageHero: React.FC<PageHeroProps> = ({
 }) => (
   <section className="relative isolate min-h-[390px] overflow-hidden border-b border-slate-200 bg-slate-50">
     <div className="absolute inset-0 -z-10">
-      <img
-        src={imageSrc}
-        alt={imageAlt}
-        className={`h-full w-full object-cover ${imagePosition}`}
-      />
+      {imageSrc && (
+        <img
+          src={imageSrc}
+          alt={imageAlt}
+          className={`h-full w-full object-cover ${imagePosition}`}
+        />
+      )}
       <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-white/60 sm:from-white sm:via-white/90 sm:to-transparent lg:from-white lg:via-white/85 lg:via-45% lg:to-transparent lg:to-70%" />
       <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" />
     </div>

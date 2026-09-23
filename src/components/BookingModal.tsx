@@ -321,9 +321,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                   >
-                    <option value="morning">Morning (9:00 AM - 12:00 PM)</option>
-                    <option value="midday">Afternoon (12:00 PM - 4:00 PM)</option>
-                    <option value="evening">Evening (4:00 PM - 9:00 PM, Chavara &amp; Nellimukku)</option>
+                    <option value="morning">Morning</option>
+                    <option value="midday">Afternoon</option>
+                    <option value="evening">Evening</option>
                   </select>
                 </div>
 

@@ -9,8 +9,6 @@ import {
   Check, 
   X, 
   ShieldCheck, 
-  UploadCloud, 
-  Key, 
   Layers, 
   FileText, 
   Sparkles,
@@ -25,17 +23,11 @@ interface SanityStatusModalProps {
 }
 
 export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, onClose, onNavigateToStudio }) => {
-  const { sanityStatus, refreshSanityData, seedSanity, isLoading } = useClinic();
-  const [activeTab, setActiveTab] = useState<'status' | 'seed' | 'instructions'>('status');
+  const { sanityStatus, refreshSanityData, isLoading } = useClinic();
+  const [activeTab, setActiveTab] = useState<'status' | 'instructions'>('status');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // Seed state
-  const [seedToken, setSeedToken] = useState('');
-  const [isSeeding, setIsSeeding] = useState(false);
-  const [seedSuccess, setSeedSuccess] = useState<string | null>(null);
-  const [seedError, setSeedError] = useState<string | null>(null);
-
   if (!isOpen) return null;
 
   const handleCopy = (text: string, key: string) => {
@@ -48,25 +40,6 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
     setIsRefreshing(true);
     await refreshSanityData();
     setIsRefreshing(false);
-  };
-
-  const handleRunSeed = async () => {
-    if (!seedToken.trim()) {
-      setSeedError('Please paste your Sanity API Write Token from manage.sanity.io');
-      return;
-    }
-    setIsSeeding(true);
-    setSeedError(null);
-    setSeedSuccess(null);
-    try {
-      await seedSanity(seedToken.trim());
-      setSeedSuccess('Successfully seeded all clinic data into your Sanity dataset! The site is now completely live from Sanity CMS.');
-      await refreshSanityData();
-    } catch (err: any) {
-      setSeedError(err?.message || 'Failed to seed Sanity dataset. Please verify your token has Editor permissions.');
-    } finally {
-      setIsSeeding(false);
-    }
   };
 
   return (
@@ -89,7 +62,7 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
                     ? 'bg-emerald-100 text-emerald-800 border-emerald-300' 
                     : 'bg-blue-100 text-blue-800 border-blue-300'
                 }`}>
-                  {sanityStatus.hasCustomContent ? 'Live Sanity Data' : 'Connected (Fallback Active)'}
+                  {sanityStatus.hasCustomContent ? 'Live Sanity Data' : 'No Published CMS Content'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -117,17 +90,6 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
           >
             <Layers className="w-4 h-4" />
             <span>Connection &amp; Documents</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('seed')}
-            className={`pb-3 px-3 border-b-2 transition-all flex items-center gap-1.5 ${
-              activeTab === 'seed'
-                ? 'border-emerald-600 text-emerald-800'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <UploadCloud className="w-4 h-4" />
-            <span>Seed Data to Sanity</span>
           </button>
           <button
             onClick={() => setActiveTab('instructions')}
@@ -170,7 +132,7 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
                   <p className="mt-1.5 text-slate-600 leading-relaxed">
                     {sanityStatus.hasCustomContent
                       ? `All content on this website is currently being served in real-time from your Sanity dataset "${sanityStatus.dataset}" (${sanityStatus.totalSanityDocs} published documents).`
-                      : `Your website is connected to Sanity project "${sanityStatus.projectId}". Because the dataset is currently empty, the site is displaying the full clinic baseline so nothing is broken. Use the "Seed Data to Sanity" tab to push all clinic data into your Sanity project with one click!`}
+                      : `Your website is connected to Sanity project "${sanityStatus.projectId}", but no published clinic content was found. Add and publish content in Sanity Studio to display it on the website.`}
                   </p>
                 </div>
               </div>
@@ -182,7 +144,7 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
                     Content Types &amp; Document Counts
                   </h4>
                   <span className="text-[11px] text-slate-500">
-                    {sanityStatus.hasCustomContent ? 'Live from Sanity' : 'Baseline Fallback Active'}
+                    {sanityStatus.hasCustomContent ? 'Live from Sanity' : 'No Published CMS Content'}
                   </span>
                 </div>
 
@@ -265,84 +227,7 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
             </div>
           )}
 
-          {/* TAB 2: SEED DATA TO SANITY */}
-          {activeTab === 'seed' && (
-            <div className="space-y-5">
-              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-emerald-950 text-xs leading-relaxed space-y-1.5">
-                <h4 className="font-bold text-sm flex items-center gap-1.5">
-                  <UploadCloud className="w-4 h-4 text-emerald-700" />
-                  One-Click Sanity Population Tool
-                </h4>
-                <p>
-                  This tool pushes the entire Swastik Healthcare clinic structure (all 6 Treatments, 6 Conditions, Team Members, Testimonials, Locations, Settings, and Custom Pages) directly into your Sanity project in <strong>one transaction</strong>.
-                </p>
-              </div>
-
-              {seedSuccess && (
-                <div className="p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs flex items-start gap-2.5">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold text-sm">Migration Complete!</p>
-                    <p className="mt-1">{seedSuccess}</p>
-                  </div>
-                </div>
-              )}
-
-              {seedError && (
-                <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-start gap-2.5">
-                  <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-bold">Error uploading to Sanity</p>
-                    <p className="mt-1">{seedError}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-3">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Step 1: Get a Write Token from Sanity
-                </label>
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
-                  <p>
-                    1. Open <a href={`https://manage.sanity.io/projects/${sanityStatus.projectId}/api`} target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold underline inline-flex items-center gap-1">manage.sanity.io &rarr; Project {sanityStatus.projectId} &rarr; API <ExternalLink className="w-3 h-3" /></a>
-                  </p>
-                  <p>
-                    2. Click <strong>Add API token</strong>, name it <em>"Website Editor"</em>, and select <strong>Editor</strong> permission.
-                  </p>
-                  <p>
-                    3. Copy the token and paste it below:
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Step 2: Paste Sanity Token
-                </label>
-                <div className="relative">
-                  <Key className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type="password"
-                    placeholder="sk... (Sanity Editor Token)"
-                    value={seedToken}
-                    onChange={(e) => setSeedToken(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 text-xs font-mono rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                  />
-                </div>
-              </div>
-
-              <button
-                onClick={handleRunSeed}
-                disabled={isSeeding}
-                className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2"
-              >
-                <UploadCloud className={`w-4 h-4 ${isSeeding ? 'animate-bounce' : ''}`} />
-                <span>{isSeeding ? 'Pushing Documents to Sanity...' : 'Upload & Seed Everything to Sanity'}</span>
-              </button>
-            </div>
-          )}
-
-          {/* TAB 3: STUDIO ACCESS & HOW TO ADD PAGES */}
+          {/* TAB 2: STUDIO ACCESS & HOW TO ADD PAGES */}
           {activeTab === 'instructions' && (
             <div className="space-y-5 text-xs text-slate-700 leading-relaxed">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
