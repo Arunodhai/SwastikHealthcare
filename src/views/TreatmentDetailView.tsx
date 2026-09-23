@@ -11,6 +11,7 @@ import {
   Sparkles 
 } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
+import { DetailActionCard } from '../components/DetailActionCard';
 
 interface TreatmentDetailViewProps {
   slug: string;
@@ -262,54 +263,16 @@ export const TreatmentDetailView: React.FC<TreatmentDetailViewProps> = ({
             {/* Right Column: Sticky Booking Widget & Related Conditions */}
             <div className="lg:col-span-4 space-y-8">
               
-              {/* Quick Booking Sticky Card */}
-              <div className="sticky top-24 bg-white rounded-2xl border border-slate-200 p-6 shadow-md space-y-5">
-                <div className="space-y-1 pb-4 border-b border-slate-100">
-                  {pageCopy?.bookingEyebrow && <span className="text-[11px] font-bold text-emerald-700 uppercase font-mono">{pageCopy.bookingEyebrow}</span>}
-                  <h3 className="text-lg font-bold text-[#0f2330] font-heading">
-                    {treatment.title}
-                  </h3>
-                  {treatment.sessionSubtitle && (
-                    <p className="text-xs text-slate-500">
-                      {treatment.sessionSubtitle}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2 text-xs text-slate-600">
-                  {treatment.durationMinutes && (
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Session Length</span>
-                      <span className="font-semibold text-slate-800">{treatment.durationMinutes} Minutes</span>
-                    </div>
-                  )}
-                  {treatment.healthRebates && (
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Health Rebates</span>
-                      <span className="font-semibold text-emerald-700">{treatment.healthRebates}</span>
-                    </div>
-                  )}
-                  {treatment.referralRequirement && (
-                    <div className="flex justify-between py-1 border-b border-slate-100">
-                      <span className="text-slate-500">Referral Needed</span>
-                      <span className="font-semibold text-slate-800">{treatment.referralRequirement}</span>
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  id="sidebar-book-treatment-btn"
-                  onClick={() => onOpenBooking(treatment.slug)}
-                  className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2"
-                >
-                  <Calendar className="w-4 h-4 text-[#0f2330]" />
-                  <span>{pageCopy?.sidebarCtaLabel}</span>
-                </button>
-
-                {settings.phone && <p className="text-[11px] text-slate-400 text-center">
-                  Questions? Call our reception at {settings.phone}
-                </p>}
-              </div>
+              <DetailActionCard
+                eyebrow={pageCopy?.bookingEyebrow}
+                heading={pageCopy?.bookingHeading || ''}
+                description={pageCopy?.bookingDescription || treatment.sessionSubtitle}
+                highlights={pageCopy?.bookingHighlights}
+                ctaLabel={pageCopy?.sidebarCtaLabel || settings.heroPrimaryCtaLabel || ''}
+                reassurance={pageCopy?.bookingReassurance}
+                phone={settings.phone || undefined}
+                onBook={() => onOpenBooking(treatment.slug)}
+              />
 
               {/* Related Conditions */}
               {relatedConditions.length > 0 && (

@@ -10,6 +10,7 @@ import {
   HelpCircle 
 } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
+import { DetailActionCard } from '../components/DetailActionCard';
 
 interface ConditionDetailViewProps {
   slug: string;
@@ -215,42 +216,16 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
             {/* Right Column: Recommended Treatments & Booking */}
             <div className="lg:col-span-4 space-y-8">
               
-              <div className="sticky top-24 bg-white rounded-2xl border border-slate-200 p-6 shadow-md space-y-5">
-                <div className="space-y-1 pb-4 border-b border-slate-100">
-                  {condition.actionEyebrow && (
-                    <span className="text-[11px] font-bold text-emerald-700 uppercase font-mono">
-                      {condition.actionEyebrow}
-                    </span>
-                  )}
-                  {condition.actionHeading && (
-                    <h3 className="text-lg font-bold text-[#0f2330] font-heading">
-                      {condition.actionHeading}
-                    </h3>
-                  )}
-                  {condition.actionSubtitle && (
-                    <p className="text-xs text-slate-500">
-                      {condition.actionSubtitle}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  onClick={onOpenBooking}
-                  className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2"
-                >
-                  <Calendar className="w-4 h-4 text-[#0f2330]" />
-                  <span>{pageCopy?.sidebarCtaLabel}</span>
-                </button>
-
-                <div className="pt-2 text-xs text-slate-500 space-y-1 text-center">
-                  {condition.rebateNote && (
-                    <p>{condition.rebateNote}</p>
-                  )}
-                  {settings.phone && (
-                    <p className="font-semibold text-slate-800">Phone: {settings.phone}</p>
-                  )}
-                </div>
-              </div>
+              <DetailActionCard
+                eyebrow={condition.actionEyebrow}
+                heading={condition.actionHeading || ''}
+                description={condition.actionSubtitle}
+                highlights={pageCopy?.bookingHighlights}
+                ctaLabel={pageCopy?.sidebarCtaLabel || settings.heroPrimaryCtaLabel || ''}
+                reassurance={pageCopy?.bookingReassurance || condition.rebateNote}
+                phone={settings.phone || undefined}
+                onBook={onOpenBooking}
+              />
 
               {/* Related Services */}
               {relatedTreatments.length > 0 && (

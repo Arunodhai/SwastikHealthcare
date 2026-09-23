@@ -55,6 +55,136 @@ const galleryItems = [
   ['general-6', 'Rehabilitation Session', 'clinic', 'Clinic & Care', 'A general rehabilitation session image.', 'image-0d66befa578c22609f2e0169a65e85d7e7f4b3be-1000x681-jpg'],
 ] as const;
 
+const treatmentDetailContent: Record<string, {
+  sessionSubtitle: string;
+  benefits: string[];
+  relatedConditionSlugs: string[];
+}> = {
+  'orthopaedic-rehabilitation': {
+    sessionSubtitle: 'A structured plan for restoring movement and function after orthopaedic conditions or procedures.',
+    benefits: ['Support for comfortable movement', 'Progressive strength and mobility work', 'Guidance toward everyday functional recovery'],
+    relatedConditionSlugs: ['fracture-joint-replacement-arthritis', 'back-neck-joint-pain'],
+  },
+  'neurological-rehabilitation': {
+    sessionSubtitle: 'Individual rehabilitation support for movement, balance, coordination, and daily function.',
+    benefits: ['Movement and balance practice', 'Support for coordination and mobility', 'Functional training for daily activities'],
+    relatedConditionSlugs: ['stroke-paralysis-nerve-disorders'],
+  },
+  'pain-management-clinic': {
+    sessionSubtitle: 'Assessment-led physiotherapy support for acute or persistent back, neck, and joint pain.',
+    benefits: ['Support for pain relief', 'Improved movement confidence', 'A practical plan for daily activity'],
+    relatedConditionSlugs: ['back-neck-joint-pain', 'fracture-joint-replacement-arthritis'],
+  },
+  'geriatric-physiotherapy': {
+    sessionSubtitle: 'Mobility, balance, and fall-prevention support designed around the needs of older adults.',
+    benefits: ['Safer everyday movement', 'Balance and mobility practice', 'Support for confidence and independence'],
+    relatedConditionSlugs: ['age-related-mobility'],
+  },
+  'sports-injury-rehabilitation': {
+    sessionSubtitle: 'Progressive rehabilitation for strains, ligament injuries, reconditioning, and return to sport.',
+    benefits: ['Progressive strength recovery', 'Movement and activity reconditioning', 'Guidance for a safe return to sport'],
+    relatedConditionSlugs: ['sports-injuries'],
+  },
+  'pediatric-physiotherapy': {
+    sessionSubtitle: 'Age-appropriate movement and postural support for children and their families.',
+    benefits: ['Support for developmental movement', 'Postural and mobility guidance', 'Family-centred functional goals'],
+    relatedConditionSlugs: [],
+  },
+  'cardio-pulmonary-rehabilitation': {
+    sessionSubtitle: 'Guided conditioning to support breathing, endurance, and everyday activity.',
+    benefits: ['Breathing and endurance support', 'Graded physical conditioning', 'Confidence with everyday activity'],
+    relatedConditionSlugs: [],
+  },
+  'home-visit-physiotherapy': {
+    sessionSubtitle: 'Physiotherapy delivered at home for bedridden, elderly, or mobility-limited patients.',
+    benefits: ['Care in the patient’s home', 'Support for mobility and daily function', 'A practical option when clinic travel is difficult'],
+    relatedConditionSlugs: ['age-related-mobility', 'stroke-paralysis-nerve-disorders'],
+  },
+  'inpatient-admission-facility': {
+    sessionSubtitle: 'Continued rehabilitation support for patients who require hospital admission.',
+    benefits: ['Rehabilitation during an inpatient stay', 'Ongoing mobility and functional support', 'Care coordinated around admission needs'],
+    relatedConditionSlugs: ['fracture-joint-replacement-arthritis', 'stroke-paralysis-nerve-disorders'],
+  },
+  'diabetic-neuropathy-foot-rehabilitation': {
+    sessionSubtitle: 'Specialized rehabilitation for diabetes-related numbness, tingling, weakness, and foot mobility concerns.',
+    benefits: ['Foot and lower-limb strengthening', 'Balance and walking support', 'Guidance for safer daily mobility'],
+    relatedConditionSlugs: ['diabetic-foot-symptoms'],
+  },
+  'senior-citizen-vitality-wellness': {
+    sessionSubtitle: 'A 60+ wellness program supporting active mobility, energy, relaxation, and wellbeing.',
+    benefits: ['Gentle support for active mobility', 'Physical and mental stress relief', 'Encouragement for energy and wellbeing'],
+    relatedConditionSlugs: ['age-related-mobility'],
+  },
+};
+
+const conditionDetailContent: Record<string, {
+  commonSymptoms: string[];
+  possibleCauses: string[];
+  physioApproach: string[];
+}> = {
+  'back-neck-joint-pain': {
+    commonSymptoms: ['Pain or stiffness in the back, neck, or joints', 'Reduced comfort during movement', 'Difficulty with work, travel, or everyday activity'],
+    possibleCauses: ['Acute or persistent musculoskeletal pain', 'Joint or spine-related mobility problems', 'Strain linked to activity, posture, or daily load'],
+    physioApproach: ['Assessment of pain, movement, and functional limits', 'A care plan focused on comfortable movement and activity', 'Progressive review based on mobility and daily function'],
+  },
+  'fracture-joint-replacement-arthritis': {
+    commonSymptoms: ['Reduced movement during fracture recovery', 'Stiffness or weakness after joint replacement', 'Arthritis-related difficulty with mobility'],
+    possibleCauses: ['Recovery following a fracture', 'Rehabilitation needs after joint replacement', 'Joint changes associated with arthritis'],
+    physioApproach: ['Assessment of movement, strength, and functional needs', 'Progressive rehabilitation matched to recovery stage', 'Support for returning to safe everyday activity'],
+  },
+  'stroke-paralysis-nerve-disorders': {
+    commonSymptoms: ['Changes in movement or muscle control', 'Difficulty with balance or coordination', 'Reduced independence in daily activities'],
+    possibleCauses: ['Recovery needs following stroke', 'Movement limitations associated with paralysis', 'Neurological conditions including Parkinson’s or nerve disorders'],
+    physioApproach: ['Individual assessment of movement and function', 'Guided balance, coordination, and mobility practice', 'Functional rehabilitation for everyday activities'],
+  },
+  'sports-injuries': {
+    commonSymptoms: ['Pain or weakness after a sports injury', 'Reduced confidence with training or competition', 'Difficulty returning to normal athletic movement'],
+    possibleCauses: ['Ligament injuries or muscle strains', 'Training-related overload', 'Incomplete strength or movement recovery'],
+    physioApproach: ['Assessment of the injured area and activity goals', 'Progressive strength and movement reconditioning', 'A staged plan for returning to sport'],
+  },
+  'diabetic-foot-symptoms': {
+    commonSymptoms: ['Numbness or tingling in the feet', 'Foot or lower-limb weakness', 'Reduced balance or confidence while walking'],
+    possibleCauses: ['Diabetes-related neuropathy', 'Reduced foot strength or sensation', 'Mobility changes linked to foot symptoms'],
+    physioApproach: ['Assessment of foot function, balance, and walking', 'Targeted strengthening and mobility work', 'Support for safer movement and daily activity'],
+  },
+  'age-related-mobility': {
+    commonSymptoms: ['Reduced mobility or balance', 'Concern about falls', 'Lower confidence with everyday movement'],
+    possibleCauses: ['Age-related changes in strength and balance', 'Reduced activity or mobility', 'Recovery needs following illness or periods of inactivity'],
+    physioApproach: ['Assessment of mobility, balance, and functional goals', 'Balance re-education and fall-prevention support', 'Gentle progression toward safer, more active movement'],
+  },
+};
+
+const treatmentDetailPageCopy = {
+  primaryCtaLabel: 'Request an Appointment',
+  secondaryCtaLabel: 'View Our Approach',
+  suitableForHeading: 'Who This Service Supports',
+  benefitsHeading: 'How This Service Can Help',
+  approachHeading: 'Your Rehabilitation Pathway',
+  approachIntro: 'Care begins with an individual assessment and progresses according to mobility, comfort, and functional goals.',
+  faqHeading: 'Frequently Asked Questions',
+  bookingEyebrow: 'Plan Your Visit',
+  bookingHeading: 'Start With an Assessment',
+  bookingDescription: 'Request an appointment and the clinic team will help arrange the most suitable care option.',
+  bookingHighlights: ['Individual clinical assessment', 'Care plan based on rehabilitation needs', 'Choose from three Kollam branches'],
+  bookingReassurance: 'Your request will be reviewed by the clinic team before the appointment is confirmed.',
+  sidebarCtaLabel: 'Request an Appointment',
+  relatedConditionsHeading: 'Related Conditions',
+};
+
+const conditionDetailPageCopy = {
+  heroHighlights: ['Individual Assessment', 'Rehabilitation Plan'],
+  primaryCtaLabel: 'Request an Assessment',
+  symptomsHeading: 'Common Signs & Difficulties',
+  causesHeading: 'Common Reasons People Seek Care',
+  approachHeading: 'How Physiotherapy Can Support Recovery',
+  approachIntro: 'The physiotherapy team assesses movement and function before recommending an individual rehabilitation plan.',
+  medicalNotice: 'This information is educational and does not replace an individual clinical assessment. Care recommendations depend on each person’s symptoms, health, and rehabilitation needs.',
+  bookingHighlights: ['Individual clinical assessment', 'Care plan based on rehabilitation needs', 'Choose from three Kollam branches'],
+  bookingReassurance: 'Your request will be reviewed by the clinic team before the appointment is confirmed.',
+  sidebarCtaLabel: 'Request an Assessment',
+  relatedTreatmentsHeading: 'Recommended Services',
+};
+
 async function main() {
   const settingsDocuments = await client.fetch<Array<{ _id: string; navbarPages?: any[] }>>(
     '*[_id in ["clinicSettings-singleton", "drafts.clinicSettings-singleton"]]{_id, navbarPages}',
@@ -104,16 +234,30 @@ async function main() {
   }
 
   for (const [slug, assetId] of Object.entries(treatmentAssets)) {
+    const detailContent = treatmentDetailContent[slug];
     transaction = transaction.patch(`treatment-${slug}`, (patch) => patch.set({
       heroImage: image(assetId),
       heroImageAlt: `${slug.replaceAll('-', ' ')} physiotherapy`,
+      sessionSubtitle: detailContent.sessionSubtitle,
+      benefits: detailContent.benefits,
+      relatedConditionSlugs: detailContent.relatedConditionSlugs,
+      detailPageCopy: treatmentDetailPageCopy,
     }));
   }
 
   for (const [slug, assetId] of Object.entries(conditionAssets)) {
+    const detailContent = conditionDetailContent[slug];
     transaction = transaction.patch(`condition-${slug}`, (patch) => patch.set({
       image: image(assetId),
       imageAlt: `${slug.replaceAll('-', ' ')} rehabilitation support`,
+      commonSymptoms: detailContent.commonSymptoms,
+      possibleCauses: detailContent.possibleCauses,
+      physioApproach: detailContent.physioApproach,
+      actionEyebrow: 'Next Step',
+      actionHeading: 'Discuss Your Symptoms',
+      actionSubtitle: 'Request an assessment so the clinic can recommend the most suitable rehabilitation plan.',
+      rebateNote: 'Care recommendations follow an individual clinical assessment.',
+      detailPageCopy: conditionDetailPageCopy,
     }));
   }
 

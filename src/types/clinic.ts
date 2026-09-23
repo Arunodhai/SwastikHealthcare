@@ -34,6 +34,10 @@ export interface Treatment {
     approachIntro?: string;
     faqHeading?: string;
     bookingEyebrow?: string;
+    bookingHeading?: string;
+    bookingDescription?: string;
+    bookingHighlights?: string[];
+    bookingReassurance?: string;
     sidebarCtaLabel?: string;
     relatedConditionsHeading?: string;
   };
@@ -65,6 +69,8 @@ export interface Condition {
     approachHeading?: string;
     approachIntro?: string;
     medicalNotice?: string;
+    bookingHighlights?: string[];
+    bookingReassurance?: string;
     sidebarCtaLabel?: string;
     relatedTreatmentsHeading?: string;
   };
