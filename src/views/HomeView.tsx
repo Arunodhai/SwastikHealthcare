@@ -5,8 +5,6 @@ import {
   ShieldCheck, 
   Award, 
   CheckCircle2, 
-  ChevronLeft, 
-  ChevronRight,
   GraduationCap,
   ClipboardList,
   Activity,
@@ -60,7 +58,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     treatments: clinicTreatments,
     conditions: clinicConditions,
     teamMembers: clinicTeamMembers,
-    testimonials: clinicTestimonials,
     locations: clinicLocations,
     isLoading,
   } = useClinic();
@@ -68,12 +65,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
   const treatments = clinicTreatments;
   const conditions = clinicConditions;
   const teamMembers = clinicTeamMembers;
-  const testimonials = clinicTestimonials;
   const settings = clinicSettings;
   const locations = clinicLocations;
   const copy = settings.uiCopy || {};
-
-  const [activeTestimonialIdx, setActiveTestimonialIdx] = useState(0);
 
   const [quickForm, setQuickForm] = useState({
     fullName: '',
@@ -81,7 +75,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     injuryConcern: '',
     location: locations[0]?.id || '',
     appointmentType: 'Orthopaedic Rehabilitation',
-    preferredTime: 'Anytime Today / Tomorrow',
+    preferredTime: 'Any available time',
   });
   const [quickFormSuccess, setQuickFormSuccess] = useState(false);
 
@@ -93,8 +87,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     }
     setQuickFormSuccess(true);
   };
-
-  const activeTestimonial = testimonials[activeTestimonialIdx] || testimonials[0];
 
   const heroBgImage = settings.heroBgImage?.trim();
   const heroEyebrow = settings.heroEyebrow?.trim();
@@ -247,26 +239,23 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6 text-center">
-            {(settings.trustHighlights || []).map((item, idx, arr) => {
-              const isLastItemAndOdd = idx === arr.length - 1 && arr.length % 2 !== 0;
-              return (
-                <div
-                  key={item.id || (item as any)._key || `trust-item-${idx}`}
-                  className={`flex flex-col items-center group ${isLastItemAndOdd ? 'col-span-2 sm:col-span-2 lg:col-span-1' : ''}`}
-                >
-                  <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200/80 shadow-2xs flex items-center justify-center text-emerald-700 mb-3 group-hover:bg-emerald-50 group-hover:border-emerald-300 transition-all">
-                    {renderTrustIcon(item.icon)}
-                  </div>
-                  <span className="text-xs font-bold text-[#0f2330] leading-tight whitespace-pre-line">
-                    {item.title}
-                  </span>
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+            {(settings.trustHighlights || []).map((item, idx) => (
+              <div
+                key={item.id || (item as any)._key || `trust-item-${idx}`}
+                className="group min-h-36 rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-5 shadow-2xs flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-sm"
+              >
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700 mb-4 group-hover:bg-emerald-100 transition-colors">
+                  {renderTrustIcon(item.icon)}
                 </div>
-              );
-            })}
+                <span className="text-xs sm:text-[13px] font-bold text-[#0f2330] leading-snug whitespace-pre-line">
+                  {item.title}
+                </span>
+              </div>
+            ))}
           </div>
           {(settings.healthFunds || []).length > 0 && (
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+            <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2">
               {(settings.healthFunds || []).map((fund, index) => (
                 <span key={(fund as any)._key || index} className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs">
                   {fund.name}{fund.badgeText ? ` · ${fund.badgeText}` : ''}
@@ -449,132 +438,99 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         </div>
       </section>
 
-      {/* 5. SPLIT TESTIMONIAL & TEAM SECTION */}
-      <section className="py-16 sm:py-20 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
-            {testimonials.length > 0 && <div className="lg:col-span-5 flex flex-col justify-between bg-slate-50/70 rounded-3xl p-6 sm:p-8 border border-slate-200/80">
-              <div>
-                <h3 className="text-2xl font-bold text-[#0f2330] font-heading mb-4">
-                  {settings.reviewsTitle}
-                </h3>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i} className="text-lg">★</span>
-                  ))}
-                </div>
-                <blockquote className="text-slate-700 text-sm sm:text-base leading-relaxed italic min-h-[90px]">
-                  "{activeTestimonial?.review}"
-                </blockquote>
-              </div>
-
-              <div className="pt-6 mt-6 border-t border-slate-200/80 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {activeTestimonial?.avatar ? <img
-                    src={activeTestimonial.avatar}
-                    alt={activeTestimonial.name}
-                    className="w-11 h-11 rounded-full object-cover border border-emerald-400"
-                  /> : <div className="w-11 h-11 rounded-full bg-emerald-100 border border-emerald-300" aria-hidden="true" />}
-                  <div>
-                    <h4 className="text-sm font-bold text-[#0f2330] font-heading leading-tight">
-                      {activeTestimonial?.name}
-                    </h4>
-                    <p className="text-xs text-emerald-700 font-medium">
-                      {activeTestimonial?.location}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setActiveTestimonialIdx((prev) => (prev > 0 ? prev - 1 : testimonials.length - 1))}
-                    aria-label="Previous testimonial"
-                    className="p-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-100 text-slate-700"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <div className="flex gap-1">
-                    {testimonials.map((t, i) => (
-                      <button
-                        key={t.id || (t as any)._id || `testimonial-dot-${i}`}
-                        onClick={() => setActiveTestimonialIdx(i)}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          activeTestimonialIdx === i ? 'w-5 bg-emerald-600' : 'bg-slate-300'
-                        }`}
-                        aria-label={`Go to slide ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => setActiveTestimonialIdx((prev) => (prev < testimonials.length - 1 ? prev + 1 : 0))}
-                    aria-label="Next testimonial"
-                    className="p-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-100 text-slate-700"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>}
-
-            <div className={`${testimonials.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col justify-between`}>
-              <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold text-[#0f2330] font-heading">
-                    {settings.teamTitle}
-                  </h3>
-                  <button
-                    onClick={() => onNavigate('/about')}
-                    className="text-xs font-bold text-emerald-700 hover:underline hidden sm:inline-block"
-                  >
-                    {copy.homeTeamCredentialsLabel} &rarr;
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {teamMembers.slice(0, 3).map((therapist, idx) => (
-                    <div
-                      key={therapist.id || (therapist as any)._id || `therapist-${idx}`}
-                      className="bg-slate-50/50 rounded-2xl border border-slate-200/80 p-3.5 text-center flex flex-col items-center hover:border-emerald-300 hover:shadow-sm transition-all"
-                    >
-                      {therapist.photo ? <img
-                        src={therapist.photo}
-                        alt={therapist.name}
-                        className="w-24 h-24 rounded-full object-cover border-2 border-white shadow-sm mb-3"
-                      /> : <div className="w-24 h-24 rounded-full bg-slate-200 border-2 border-white shadow-sm mb-3" aria-hidden="true" />}
-                      <h4 className="text-sm font-bold text-[#0f2330] font-heading leading-tight">
-                        {therapist.name}
-                      </h4>
-                      <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
-                        {therapist.role}
-                      </p>
-                      <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">
-                        {therapist.title}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-6 text-center">
-                <button
-                  id="meet-team-view-btn"
-                  onClick={() => onNavigate('/about')}
-                  className="px-6 py-2.5 rounded-full text-xs font-bold border border-slate-300 hover:bg-slate-50 text-slate-800 transition-colors inline-flex items-center gap-1.5"
-                >
-                  <span>{copy.homeTeamCtaLabel}</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+      {/* 5. CLINICAL LEADERSHIP */}
+      {teamMembers.length > 0 && (
+        <section className="py-16 sm:py-20 bg-white border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 sm:mb-10">
+              <span className="text-xs font-bold text-emerald-700 tracking-wider uppercase font-mono mb-2 block">
+                Clinical Leadership
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f2330] font-heading tracking-tight">
+                {settings.teamTitle}
+              </h2>
             </div>
+
+            {teamMembers.length === 1 ? (
+              <div className="overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-50 to-emerald-50/50 shadow-sm">
+                <div className="grid md:grid-cols-[320px_1fr] lg:grid-cols-[380px_1fr] items-stretch">
+                  <div className="relative min-h-80 bg-[#0f2330]">
+                    {teamMembers[0].photo ? (
+                      <img
+                        src={teamMembers[0].photo}
+                        alt={teamMembers[0].name}
+                        className="absolute inset-0 h-full w-full object-cover object-top"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-slate-200" aria-hidden="true" />
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0f2330]/75 to-transparent" />
+                  </div>
+
+                  <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+                    <p className="text-xs font-bold uppercase tracking-widest text-emerald-700 mb-2">
+                      {teamMembers[0].role}
+                    </p>
+                    <h3 className="text-3xl sm:text-4xl font-extrabold text-[#0f2330] font-heading tracking-tight leading-tight">
+                      {teamMembers[0].name}
+                    </h3>
+                    <p className="mt-2 text-sm font-semibold text-slate-600">
+                      {teamMembers[0].title}
+                    </p>
+                    {teamMembers[0].bio && (
+                      <p className="mt-5 text-sm leading-relaxed text-slate-600 max-w-2xl">
+                        {teamMembers[0].bio}
+                      </p>
+                    )}
+                    {(teamMembers[0].specialization || []).length > 0 && (
+                      <div className="mt-6 flex flex-wrap gap-2">
+                        {teamMembers[0].specialization.map((item) => (
+                          <span key={item} className="rounded-full border border-emerald-200 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-800">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="mt-7">
+                      <button
+                        id="meet-team-view-btn"
+                        onClick={() => onNavigate('/about#team')}
+                        className="px-6 py-3 rounded-full text-xs font-bold bg-[#0f2330] hover:bg-[#193b50] text-white transition-colors inline-flex items-center gap-2"
+                      >
+                        <span>{copy.homeTeamCtaLabel}</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {teamMembers.map((therapist, idx) => (
+                  <div
+                    key={therapist.id || (therapist as any)._id || `therapist-${idx}`}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-center flex flex-col items-center"
+                  >
+                    {therapist.photo ? (
+                      <img src={therapist.photo} alt={therapist.name} className="w-28 h-28 rounded-full object-cover object-top border-4 border-white shadow-sm" />
+                    ) : (
+                      <div className="w-28 h-28 rounded-full bg-slate-200 border-4 border-white shadow-sm" aria-hidden="true" />
+                    )}
+                    <h3 className="mt-4 text-lg font-bold text-[#0f2330] font-heading">{therapist.name}</h3>
+                    <p className="mt-1 text-xs font-semibold text-emerald-700">{therapist.role}</p>
+                    <p className="mt-1 text-xs text-slate-500">{therapist.title}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 6. HOW IT WORKS */}
       <section className="py-16 sm:py-20 bg-slate-50/70 border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 sm:mb-12">
             <span className="text-xs font-bold text-emerald-700 tracking-wider uppercase font-mono mb-1 block">
               {settings.howItWorksEyebrow}
             </span>
@@ -586,23 +542,26 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
             </p>
           </div>
 
-          <div className="relative">
-            <div className="hidden lg:block absolute top-6 left-12 right-12 h-0.5 bg-slate-200 -z-0"></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 relative z-10 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
               {(settings.howItWorks || []).map((step, idx) => (
-                <div key={(step as any)._key || (step as any)._id || `step-${step.step || idx}`} className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-[#0f766e] text-white font-bold text-sm flex items-center justify-center shadow-md mb-3 ring-4 ring-white">
+                <div
+                  key={(step as any)._key || (step as any)._id || `step-${step.step || idx}`}
+                  className="relative min-h-52 rounded-2xl border border-slate-200 bg-white p-6 shadow-2xs flex flex-col items-start text-left transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-sm"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-[#0f766e] text-white font-bold text-sm flex items-center justify-center shadow-sm mb-7">
                     {step.step}
                   </div>
-                  <h4 className="text-sm font-bold text-[#0f2330] font-heading">
+                  <div className="absolute right-5 top-5 text-4xl font-extrabold text-slate-100 font-heading" aria-hidden="true">
+                    {String(step.step).padStart(2, '0')}
+                  </div>
+                  <h4 className="text-base font-bold text-[#0f2330] font-heading">
                     {step.title}
                   </h4>
-                  <p className="text-xs text-slate-600 mt-1.5 max-w-[200px] leading-relaxed">
+                  <p className="text-sm text-slate-600 mt-2 leading-relaxed">
                     {step.description}
                   </p>
                 </div>
               ))}
-            </div>
           </div>
         </div>
       </section>
