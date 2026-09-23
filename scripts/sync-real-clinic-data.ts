@@ -87,7 +87,7 @@ async function main() {
         body: page.pageKey === 'about' && section.key === 'story'
           ? [
               'Established in 2009, Swastik Healthcare provides physiotherapy and rehabilitation services under the motto “Mission Wellness.”',
-              'Led by Founder & Chief Physiotherapist Dr. Ajay Ghosh J. (PT), MPT (Ortho & Sports Medicine), the clinic supports children, adults, athletes, and senior citizens.',
+              'Care is available for children, adults, athletes, and senior citizens through clinic-based treatment, home visits, and inpatient support.',
             ]
           : section.body,
         image: page.pageKey === 'about' && section.key === 'story'
