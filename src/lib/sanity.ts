@@ -308,8 +308,8 @@ export async function seedSanityDataset(token: string) {
     tagline: DEFAULT_CLINIC_SETTINGS.tagline,
     foundedYear: '2009',
     heroEyebrow: 'Trusted Care Since 2009',
-    heroTitle: 'Restore Mobility, Recover Faster & Live Pain Free Again',
-    heroSubtitle: 'Comprehensive physiotherapy & physical rehabilitation from post-surgery recovery and mobility aids to independent movement and peak functional strength.',
+    heroTitle: DEFAULT_CLINIC_SETTINGS.heroTitle,
+    heroSubtitle: DEFAULT_CLINIC_SETTINGS.heroSubtitle,
     phone: DEFAULT_CLINIC_SETTINGS.phone,
     phoneRaw: DEFAULT_CLINIC_SETTINGS.phoneRaw,
     email: DEFAULT_CLINIC_SETTINGS.email,
@@ -317,6 +317,10 @@ export async function seedSanityDataset(token: string) {
     address: DEFAULT_CLINIC_SETTINGS.address,
     openingHours: withKeys(DEFAULT_CLINIC_SETTINGS.openingHours, 'hours'),
     howItWorks: withKeys(DEFAULT_CLINIC_SETTINGS.howItWorks, 'work'),
+    healthFunds: withKeys(DEFAULT_CLINIC_SETTINGS.healthFunds, 'services'),
+    trustHighlights: withKeys(DEFAULT_CLINIC_SETTINGS.trustHighlights, 'trust'),
+    consultationBenefits: DEFAULT_CLINIC_SETTINGS.consultationBenefits,
+    uiCopy: DEFAULT_CLINIC_SETTINGS.uiCopy,
     navbarPages,
   });
 
@@ -416,33 +420,6 @@ export async function seedSanityDataset(token: string) {
       description: g.description,
       order: i + 1,
     });
-  });
-
-  // 8. Sample Custom Page: NDIS Support & Allied Health Services
-  transaction.createOrReplace({
-    _id: 'customPage-ndis-support',
-    _type: 'customPage',
-    title: 'NDIS Support & Allied Health Services',
-    slug: { _type: 'slug', current: 'ndis-support' },
-    badge: 'Approved Allied Health Provider',
-    leadText: 'Swastik Healthcare supports self-managed and plan-managed NDIS participants across Sydney to achieve their mobility, independence, and physical therapy goals.',
-    sections: [
-      {
-        _key: 'sec_ndis_1',
-        heading: 'Empowering Independence Through Evidence-Based Physiotherapy',
-        content: 'Our clinicians collaborate closely with participants, families, support coordinators, and plan managers to deliver goal-directed therapy aligned with NDIS plan budgets.',
-        keyPoints: [
-          'Direct billing for plan-managed and self-managed participants',
-          'Comprehensive initial functional capacity assessments',
-          'Assistive technology and mobility aid prescription',
-          'Ongoing progress reports and end-of-plan reviews',
-        ],
-        callToActionText: 'Book an NDIS Consultation',
-        callToActionLink: '/contact',
-      },
-    ],
-    showInNav: true,
-    order: 1,
   });
 
   const commitResult = await transaction.commit();

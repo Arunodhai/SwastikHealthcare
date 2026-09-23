@@ -19,14 +19,18 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Physiotherapy",
+      "@type": "MedicalClinic",
       "name": "Swastik Healthcare - Physiotherapy & Rehabilitation Clinic",
       "image": "/swastik-logo.svg",
       "foundingDate": "2009",
-      "description": "Swastik Healthcare - Physiotherapy & Rehabilitation Clinic (Since 2009). Evidence-based physiotherapy, sports injury rehabilitation, back & neck pain relief, and personalized recovery care.",
-      "telephone": "+1 (800) 123-4567",
-      "priceRange": "$$",
-      "medicalSpecialty": "Physiotherapy"
+      "description": "Swastik Healthcare - Physiotherapy & Rehabilitation Clinic in Kollam, Kerala. Established in 2009 with the motto Mission Wellness.",
+      "medicalSpecialty": "Physiotherapy",
+      "founder": { "@type": "Person", "name": "Dr. Ajay Ghosh J. (PT)", "jobTitle": "Founder & Chief Physiotherapist" },
+      "department": [
+        { "@type": "MedicalClinic", "name": "Chavara Branch", "address": { "@type": "PostalAddress", "streetAddress": "Near Govt. Hospital, Titanium Junction", "addressLocality": "Chavara", "addressRegion": "Kerala", "addressCountry": "IN" } },
+        { "@type": "MedicalClinic", "name": "Nellimukku Branch", "address": { "@type": "PostalAddress", "streetAddress": "Ground Floor, Bone and Joint Care", "addressLocality": "Nellimukku, Kollam", "addressRegion": "Kerala", "addressCountry": "IN" } },
+        { "@type": "MedicalClinic", "name": "Decent Junction / Ayathil Branch", "address": { "@type": "PostalAddress", "streetAddress": "Ground Floor, C. Achuthamenon Cooperative Hospital, Decent Junction", "addressLocality": "Ayathil, Kollam", "addressRegion": "Kerala", "addressCountry": "IN" } }
+      ]
     }
     </script>
   </head>
@@ -35,4 +39,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

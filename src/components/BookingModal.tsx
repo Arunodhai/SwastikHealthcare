@@ -129,16 +129,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             Schedule Your Rehabilitation Consultation
           </h2>
           <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-lg">
-            Complete the form below to secure your consultation. Our clinical team will confirm your time slot within 2 hours.
+            Complete the form below to request a consultation at your preferred branch.
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-300 pt-3 border-t border-slate-800">
-            <span className="flex items-center gap-1.5 text-emerald-400">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Private Health Rebates Available (HICAPS)
-            </span>
-            <span className="text-slate-500">|</span>
-            <span>No GP Referral Required for Private Patients</span>
+          <div className="mt-4 flex items-center gap-2 text-xs text-emerald-300 pt-3 border-t border-slate-800">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Choose from 3 branches in Kollam</span>
           </div>
         </div>
 
@@ -163,10 +159,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               <div className="bg-slate-50 rounded-xl p-4 text-left text-xs text-slate-600 space-y-1.5 max-w-md mx-auto border border-slate-200/80">
                 <p><strong>Preferred Date:</strong> {formData.preferredDate} ({formData.preferredTime})</p>
-                <p><strong>Location:</strong> {locations.find((l: any) => l.id === formData.location)?.name || 'Central Clinic'}</p>
+                <p><strong>Location:</strong> {locations.find((l: any) => l.id === formData.location)?.name || 'Kollam Branch'}</p>
                 <p><strong>Main Concern:</strong> {formData.injuryConcern}</p>
                 <p className="text-emerald-700 font-medium pt-1">
-                  ✓ An SMS and email confirmation will be sent to {formData.email} shortly.
+                  ✓ The clinic team can use these details to follow up on your request.
                 </p>
               </div>
 
@@ -191,7 +187,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="e.g. Sarah Jenkins"
+                      placeholder="Your full name"
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
@@ -325,10 +321,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                   >
-                    <option value="morning">Morning (7:30 AM - 11:30 AM)</option>
-                    <option value="midday">Midday (11:30 AM - 2:30 PM)</option>
-                    <option value="afternoon">Afternoon (2:30 PM - 5:30 PM)</option>
-                    <option value="evening">Evening (5:30 PM - 7:30 PM)</option>
+                    <option value="morning">Morning (9:00 AM - 12:00 PM)</option>
+                    <option value="midday">Afternoon (12:00 PM - 4:00 PM)</option>
+                    <option value="evening">Evening (4:00 PM - 9:00 PM, Chavara &amp; Nellimukku)</option>
                   </select>
                 </div>
 

@@ -27,7 +27,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({ member, onBook }) => {
         {/* Member tags overlay */}
         <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-bold text-slate-800 shadow-sm flex items-center gap-1">
           <ShieldCheck className="w-3 h-3 text-emerald-600" />
-          <span>AHPRA Registered</span>
+          <span>{member.role}</span>
         </div>
         <div className="absolute bottom-3 left-3 right-3 text-white">
           <h4 className="text-xl font-bold font-heading leading-tight">
@@ -66,7 +66,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({ member, onBook }) => {
         {/* Card Action */}
         <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
           <span className="text-[11px] text-slate-500 font-mono">
-            {member.experienceYears}+ Years Clinical Exp.
+            {member.experienceYears ? `${member.experienceYears}+ Years Clinical Experience` : 'Founder • Since 2009'}
           </span>
           <button
             onClick={onBook}

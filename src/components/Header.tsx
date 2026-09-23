@@ -187,13 +187,13 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                 <span>{copy.headerBookingLabel}</span>
               </button>
 
-              <a
+              {settings.phoneRaw && settings.phone && <a
                 href={`tel:${settings.phoneRaw}`}
                 className="w-full py-3 px-4 rounded-xl text-center font-semibold text-sm border border-slate-200 text-slate-800 flex items-center justify-center gap-2 hover:bg-slate-50"
               >
                 <Phone className="w-4 h-4 text-emerald-600" />
                 <span>Call {settings.phone}</span>
-              </a>
+              </a>}
 
               <div className="text-center text-xs text-slate-500 pt-2">
                 <p>{settings.address?.full}</p>

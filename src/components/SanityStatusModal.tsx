@@ -220,7 +220,7 @@ export const SanityStatusModal: React.FC<SanityStatusModalProps> = ({ isOpen, on
                   <div className="p-3 rounded-xl border border-slate-200 bg-white">
                     <p className="text-[11px] text-slate-500 font-medium">Locations</p>
                     <p className="text-lg font-bold text-slate-900">{sanityStatus.itemCounts.locations}</p>
-                    <p className="text-[10px] text-slate-400">Sydney Clinics</p>
+                    <p className="text-[10px] text-slate-400">Kollam Clinics</p>
                   </div>
 
                   <div className="p-3 rounded-xl border border-slate-200 bg-white">

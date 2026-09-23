@@ -177,7 +177,7 @@ export const teamMemberSchema = {
     { name: 'specialization', title: 'Clinical Specializations', type: 'array', of: [{ type: 'string' }] },
     { name: 'photo', title: 'Profile Photo', type: 'image', options: { hotspot: true } },
     { name: 'bio', title: 'Biography', type: 'text', rows: 4 },
-    { name: 'ahpraNumber', title: 'AHPRA / Medical Registration No.', type: 'string' },
+    { name: 'ahpraNumber', title: 'Professional Registration No. (optional)', type: 'string' },
     { name: 'isDirector', title: 'Is Principal / Clinical Director?', type: 'boolean', initialValue: false },
     { name: 'order', title: 'Display Order', type: 'number', initialValue: 1 },
   ],
@@ -366,16 +366,16 @@ export const clinicSettingsSchema = {
     
     // --- Hero Section ---
     { name: 'heroEyebrow', title: 'Hero Eyebrow Text', type: 'string', initialValue: 'Trusted Care Since 2009' },
-    { name: 'heroTitle', title: 'Hero Main Headline', type: 'string', initialValue: 'Restore Mobility, Recover Faster & Live Pain Free Again' },
-    { name: 'heroSubtitle', title: 'Hero Subtitle', type: 'text', rows: 3, initialValue: 'Comprehensive physiotherapy & physical rehabilitation from post-surgery recovery and mobility aids to independent movement and peak functional strength.' },
+    { name: 'heroTitle', title: 'Hero Main Headline', type: 'string', initialValue: 'Mission Wellness Through Physiotherapy & Rehabilitation' },
+    { name: 'heroSubtitle', title: 'Hero Subtitle', type: 'text', rows: 3, initialValue: 'Specialized physiotherapy services across Chavara, Nellimukku, and Decent Junction in Kollam.' },
     { name: 'heroBgImage', title: 'Hero Background Image', type: 'image', options: { hotspot: true } },
     { name: 'heroImageAlt', title: 'Hero Background Image Alt Text', type: 'string', initialValue: 'Modern Swastik Healthcare physiotherapy and rehabilitation clinic' },
     { name: 'heroPrimaryCtaLabel', title: 'Hero Primary Button Label', type: 'string', initialValue: 'Book an Appointment' },
     { name: 'heroSecondaryCtaLabel', title: 'Hero Secondary Button Label', type: 'string', initialValue: 'View Physio Services' },
-    { name: 'heroBadge1Title', title: 'Hero Trust Badge 1 Title', type: 'string', initialValue: 'Health Fund' },
-    { name: 'heroBadge1Subtitle', title: 'Hero Trust Badge 1 Subtitle', type: 'string', initialValue: 'Rebates Available' },
-    { name: 'heroBadge2Title', title: 'Hero Trust Badge 2 Title', type: 'string', initialValue: 'Proudly Supporting' },
-    { name: 'heroBadge2Subtitle', title: 'Hero Trust Badge 2 Subtitle', type: 'string', initialValue: 'Local Sports & Community' },
+    { name: 'heroBadge1Title', title: 'Hero Trust Badge 1 Title', type: 'string', initialValue: '3 Branches' },
+    { name: 'heroBadge1Subtitle', title: 'Hero Trust Badge 1 Subtitle', type: 'string', initialValue: 'Across Kollam' },
+    { name: 'heroBadge2Title', title: 'Hero Trust Badge 2 Title', type: 'string', initialValue: 'Founder-Led Care' },
+    { name: 'heroBadge2Subtitle', title: 'Hero Trust Badge 2 Subtitle', type: 'string', initialValue: 'MPT Ortho & Sports Medicine' },
 
     // --- Fixed Navbar Pages ---
     {
@@ -465,10 +465,10 @@ export const clinicSettingsSchema = {
       type: 'array',
       of: [{ type: 'string' }],
       initialValue: [
-        'Same-week appointments available',
-        'Private health rebates (HICAPS on-the-spot)',
-        'Experienced & caring clinical team',
-        'Multiple clinic locations across Sydney',
+        'Orthopaedic and neurological rehabilitation',
+        'Home visit physiotherapy',
+        'Inpatient admission facility',
+        'Three clinic locations across Kollam',
       ],
     },
     { name: 'consultationImage', title: 'Consultation Feature Photo', type: 'image', options: { hotspot: true } },
@@ -509,12 +509,12 @@ export const clinicSettingsSchema = {
       title: 'Clinic Address',
       type: 'object',
       fields: [
-        { name: 'full', title: 'Full Display Address', type: 'string', initialValue: 'Level 2, 452 Medical Promenade, Sydney NSW 2000' },
-        { name: 'street', title: 'Street Address', type: 'string', initialValue: 'Level 2, 452 Medical Promenade' },
-        { name: 'suburb', title: 'Suburb / Hub', type: 'string', initialValue: 'Central Health Hub' },
-        { name: 'city', title: 'City', type: 'string', initialValue: 'Sydney' },
-        { name: 'state', title: 'State (e.g. NSW)', type: 'string', initialValue: 'NSW' },
-        { name: 'postcode', title: 'Postcode', type: 'string', initialValue: '2000' },
+        { name: 'full', title: 'Full Display Address', type: 'string', initialValue: 'Near Govt. Hospital, Titanium Junction, Chavara, Kollam, Kerala, India' },
+        { name: 'street', title: 'Street Address', type: 'string', initialValue: 'Near Govt. Hospital, Titanium Junction' },
+        { name: 'suburb', title: 'Town / Locality', type: 'string', initialValue: 'Chavara' },
+        { name: 'city', title: 'City / District', type: 'string', initialValue: 'Kollam' },
+        { name: 'state', title: 'State', type: 'string', initialValue: 'Kerala' },
+        { name: 'postcode', title: 'Postcode', type: 'string' },
       ],
     },
 
@@ -534,27 +534,27 @@ export const clinicSettingsSchema = {
       ],
     },
 
-    // --- Health Funds & Direct Rebates ---
+    // --- Homepage service highlights ---
     {
       name: 'healthFunds',
-      title: 'Accepted Health Funds & Rebates',
+      title: 'Homepage Service Highlights',
       type: 'array',
       of: [
         {
           type: 'object',
           fields: [
-            { name: 'name', title: 'Health Fund Name (e.g. Medibank, Bupa)', type: 'string' },
-            { name: 'badgeText', title: 'Badge Text (e.g. Members Choice, First Provider)', type: 'string' },
+            { name: 'name', title: 'Service Name', type: 'string' },
+            { name: 'badgeText', title: 'Supporting Label', type: 'string' },
           ],
         },
       ],
     },
 
     // --- Contact & Location Info ---
-    { name: 'phone', title: 'Display Phone', type: 'string', initialValue: '1300 123 456' },
-    { name: 'phoneRaw', title: 'Clickable Phone', type: 'string', initialValue: '+611300123456' },
-    { name: 'email', title: 'Email Address', type: 'string', initialValue: 'info@swastikhealthcare.com' },
-    { name: 'whatsappNumber', title: 'WhatsApp Contact Number', type: 'string', initialValue: '+61412345678' },
+    { name: 'phone', title: 'Display Phone', type: 'string' },
+    { name: 'phoneRaw', title: 'Clickable Phone', type: 'string' },
+    { name: 'email', title: 'Email Address', type: 'string' },
+    { name: 'whatsappNumber', title: 'WhatsApp Contact Number', type: 'string' },
     { name: 'whatsappMessage', title: 'WhatsApp Pre-filled Message', type: 'string', initialValue: 'Hi Swastik Healthcare team, I would like to enquire about booking an appointment.' },
     {
       name: 'openingHours',
@@ -596,7 +596,7 @@ export const clinicSettingsSchema = {
         { name: 'navContactLabel', title: 'Navigation: Contact', type: 'string', initialValue: 'Contact' },
         { name: 'headerBookingLabel', title: 'Header Booking Button', type: 'string', initialValue: 'Book an Appointment' },
         { name: 'headerMobileBookingLabel', title: 'Mobile Header Booking Button', type: 'string', initialValue: 'Book' },
-        { name: 'mobileRebateNote', title: 'Mobile Menu Rebate Note', type: 'string', initialValue: 'Health Fund Rebates (HICAPS) on the spot' },
+        { name: 'mobileRebateNote', title: 'Mobile Menu Supporting Note', type: 'string', initialValue: 'Three branches across Kollam' },
         { name: 'homeServicesCtaLabel', title: 'Homepage Services Button', type: 'string', initialValue: 'View All Services' },
         { name: 'homeTeamCredentialsLabel', title: 'Homepage Team Credentials Link', type: 'string', initialValue: 'View All Credentials' },
         { name: 'homeTeamCtaLabel', title: 'Homepage Team Button', type: 'string', initialValue: 'View Our Team' },
@@ -609,8 +609,8 @@ export const clinicSettingsSchema = {
         { name: 'footerSubtitle', title: 'Footer CTA Subtitle', type: 'string', initialValue: 'Appointments available this week across our modern clinical hubs.' },
         { name: 'footerBookingLabel', title: 'Footer CTA Button', type: 'string', initialValue: 'Book an Appointment' },
         { name: 'footerMission', title: 'Footer Mission Statement', type: 'text', rows: 3 },
-        { name: 'footerAccreditationPrimary', title: 'Footer Accreditation One', type: 'string', initialValue: 'AHPRA Registered' },
-        { name: 'footerAccreditationSecondary', title: 'Footer Accreditation Two', type: 'string', initialValue: 'APA Member Clinic' },
+        { name: 'footerAccreditationPrimary', title: 'Footer Highlight One', type: 'string', initialValue: 'Since 2009' },
+        { name: 'footerAccreditationSecondary', title: 'Footer Highlight Two', type: 'string', initialValue: 'Mission Wellness' },
         { name: 'footerServicesHeading', title: 'Footer Services Heading', type: 'string', initialValue: 'Services' },
         { name: 'footerConditionsHeading', title: 'Footer Conditions Heading', type: 'string', initialValue: 'Conditions' },
         { name: 'footerClinicHeading', title: 'Footer Clinic Heading', type: 'string', initialValue: 'Clinic' },

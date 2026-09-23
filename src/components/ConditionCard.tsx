@@ -17,7 +17,7 @@ export const ConditionCard: React.FC<ConditionCardProps> = ({ condition, onSelec
           <Activity className="w-3 h-3 text-emerald-600" />
           {condition.bodyAreaLabel}
         </span>
-        <span className="text-[11px] text-slate-400 font-medium">Musculoskeletal</span>
+        <span className="text-[11px] text-slate-400 font-medium">Rehabilitation Support</span>
       </div>
 
       <div>
@@ -29,7 +29,7 @@ export const ConditionCard: React.FC<ConditionCardProps> = ({ condition, onSelec
         </p>
 
         {/* Distinctive symptoms tags */}
-        <div className="mt-4 space-y-2">
+        {condition.commonSymptoms.length > 0 && <div className="mt-4 space-y-2">
           <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
             Common Signs:
           </span>
@@ -43,7 +43,7 @@ export const ConditionCard: React.FC<ConditionCardProps> = ({ condition, onSelec
               </span>
             ))}
           </div>
-        </div>
+        </div>}
 
         {/* Clinical approach highlight */}
         <div className="mt-4 p-3 rounded-xl bg-slate-100/70 border border-slate-200/60 text-xs text-slate-700 space-y-1">

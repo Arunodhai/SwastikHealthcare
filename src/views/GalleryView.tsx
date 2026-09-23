@@ -101,6 +101,11 @@ export const GalleryView: React.FC<GalleryViewProps> = ({ onOpenBooking }) => {
               </div>
             ))}
           </div>
+          {filteredItems.length === 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-600">
+              Verified clinic photographs will be added here as they become available.
+            </div>
+          )}
         </div>
       </section>
 

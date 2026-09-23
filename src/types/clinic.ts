@@ -8,7 +8,7 @@ export interface Treatment {
   heroImage?: string;
   heroImageAlt?: string;
   iconName: string;
-  durationMinutes: number;
+  durationMinutes?: number;
   sessionSubtitle?: string;
   healthRebates?: string;
   referralRequirement?: string;
@@ -76,11 +76,11 @@ export interface TeamMember {
   role: string;
   title: string;
   qualifications: string;
-  experienceYears: number;
+  experienceYears?: number;
   specialization: string[];
   photo: string;
   bio: string;
-  ahpraNumber: string;
+  ahpraNumber?: string;
   isDirector?: boolean;
 }
 

@@ -91,7 +91,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                 </h3>
 
                 <div className="space-y-4 text-sm text-slate-700">
-                  <div className="flex items-start gap-3.5">
+                  {settings.phone && <div className="flex items-start gap-3.5">
                     <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-emerald-700 shrink-0">
                       <Phone className="w-5 h-5" />
                     </div>
@@ -102,9 +102,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       </a>
                       <p className="text-xs text-slate-500 mt-0.5">{directItems.phone?.description}</p>
                     </div>
-                  </div>
+                  </div>}
 
-                  <div className="flex items-start gap-3.5">
+                  {settings.email && <div className="flex items-start gap-3.5">
                     <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-emerald-700 shrink-0">
                       <Mail className="w-5 h-5" />
                     </div>
@@ -115,9 +115,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       </a>
                       <p className="text-xs text-slate-500 mt-0.5">{directItems.email?.description}</p>
                     </div>
-                  </div>
+                  </div>}
 
-                  <div className="flex items-start gap-3.5">
+                  {cleanPhone && <div className="flex items-start gap-3.5">
                     <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[#25D366] shrink-0">
                       <MessageCircle className="w-5 h-5 fill-current" />
                     </div>
@@ -132,7 +132,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                         <span>{directItems.whatsapp?.title}</span>
                       </a>
                     </div>
-                  </div>
+                  </div>}
                 </div>
 
                 {/* Operating Hours Breakdown */}
@@ -248,8 +248,8 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                           className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                         >
                           <option>General Question</option>
-                          <option>Private Health Rebates / HICAPS</option>
-                          <option>Workers Compensation / WorkCover</option>
+                          <option>Home Visit Physiotherapy</option>
+                          <option>Inpatient / Admission Facility</option>
                           <option>NDIS Support Inquiries</option>
                           <option>Post-Surgical Protocols</option>
                         </select>
@@ -319,7 +319,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
               <iframe
                 title="Clinic Location Map"
                 className="w-full h-full border-0 filter saturate-90 contrast-105"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13251.393430588665!2d151.205!3d-33.87!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b12ae4022416f0d%3A0x5017d681632ccc0!2sSydney%20NSW%2C%20Australia!5e0!3m2!1sen!2sau!4v1680000000000!5m2!1sen!2sau"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(activeLoc?.address || 'Kollam, Kerala')}&output=embed`}
                 loading="lazy"
               ></iframe>
               <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3.5 py-2 rounded-xl shadow-md border border-slate-200 text-xs text-slate-800 flex items-center gap-2">

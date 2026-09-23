@@ -35,10 +35,10 @@ export const TreatmentCard: React.FC<TreatmentCardProps> = ({ treatment, onSelec
           {iconMap[treatment.iconName] || <Activity className="w-3.5 h-3.5 text-emerald-600" />}
           <span>{treatment.categoryLabel}</span>
         </div>
-        <div className="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-sm px-2.5 py-0.5 rounded-md text-[11px] font-medium text-white flex items-center gap-1">
+        {treatment.durationMinutes && <div className="absolute bottom-3 right-3 bg-slate-900/80 backdrop-blur-sm px-2.5 py-0.5 rounded-md text-[11px] font-medium text-white flex items-center gap-1">
           <Clock className="w-3 h-3 text-lime-400" />
           <span>{treatment.durationMinutes} mins</span>
-        </div>
+        </div>}
       </div>
 
       {/* Card Content */}

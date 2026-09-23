@@ -44,13 +44,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
             >
               {copy.footerBookingLabel}
             </button>
-            <a
+            {clinic.phoneRaw && clinic.phone && <a
               href={`tel:${clinic.phoneRaw}`}
               className="px-5 py-3 rounded-full text-xs uppercase tracking-wider font-semibold bg-white/10 hover:bg-white/15 text-white border border-slate-700 transition-colors flex items-center gap-2"
             >
               <Phone className="w-3.5 h-3.5 text-lime-400" />
               <span>{clinic.phone}</span>
-            </a>
+            </a>}
           </div>
         </div>
       </div>
@@ -183,20 +183,20 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
               {copy.footerContactHeading}
             </h4>
             <div className="space-y-2 text-xs">
-              <a
+              {clinic.phone && <a
                 href={`tel:${clinic.phoneRaw}`}
                 className="flex items-center gap-2 hover:text-white transition-colors text-white font-medium"
               >
                 <Phone className="w-3.5 h-3.5 text-lime-400 shrink-0" />
                 <span>{clinic.phone}</span>
-              </a>
-              <a
+              </a>}
+              {clinic.email && <a
                 href={`mailto:${clinic.email}`}
                 className="flex items-center gap-2 hover:text-white transition-colors"
               >
                 <Mail className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                 <span className="truncate">{clinic.email}</span>
-              </a>
+              </a>}
               <div className="flex items-start gap-2 pt-1">
                 <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0 mt-0.5" />
                 <span className="leading-snug">{clinic.address.full}</span>
@@ -225,14 +225,6 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
             <span>•</span>
             <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
               {copy.footerTermsLabel}
-            </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
-              {copy.footerNdisLabel}
-            </button>
-            <span>•</span>
-            <button onClick={() => onNavigate('/contact')} className="hover:text-slate-400">
-              {copy.footerPatientRightsLabel}
             </button>
           </div>
         </div>

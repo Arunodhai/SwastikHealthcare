@@ -306,9 +306,9 @@ export const TreatmentDetailView: React.FC<TreatmentDetailViewProps> = ({
                   <span>{pageCopy?.sidebarCtaLabel}</span>
                 </button>
 
-                <p className="text-[11px] text-slate-400 text-center">
+                {settings.phone && <p className="text-[11px] text-slate-400 text-center">
                   Questions? Call our reception at {settings.phone}
-                </p>
+                </p>}
               </div>
 
               {/* Related Conditions */}

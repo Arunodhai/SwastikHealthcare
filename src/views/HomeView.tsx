@@ -80,7 +80,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     phone: '',
     injuryConcern: '',
     location: locations[0]?.id || '',
-    appointmentType: 'Initial Physiotherapy Consultation (45m)',
+    appointmentType: 'Orthopaedic Rehabilitation',
     preferredTime: 'Anytime Today / Tomorrow',
   });
   const [quickFormSuccess, setQuickFormSuccess] = useState(false);
@@ -364,7 +364,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                           <input
                             type="tel"
                             required
-                            placeholder="04XX XXX XXX"
+                            placeholder="Your contact number"
                             value={quickForm.phone}
                             onChange={(e) => setQuickForm({ ...quickForm, phone: e.target.value })}
                             className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -411,10 +411,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                             onChange={(e) => setQuickForm({ ...quickForm, appointmentType: e.target.value })}
                             className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                           >
-                            <option>Initial Physiotherapy (45m)</option>
-                            <option>Follow-Up Consultation (30m)</option>
-                            <option>Sports Rehab &amp; Conditioning</option>
-                            <option>Workers Comp / WorkCover</option>
+                            {treatments.map((treatment) => <option key={treatment.slug}>{treatment.title}</option>)}
                           </select>
                         </div>
                       </div>
@@ -429,9 +426,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                           className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
                         >
                           <option>Anytime Today / Tomorrow</option>
-                          <option>Morning (7:30 AM - 11:30 AM)</option>
-                          <option>Midday (11:30 AM - 2:30 PM)</option>
-                          <option>Afternoon / Evening (2:30 PM - 7:00 PM)</option>
+                          <option>Morning (9:00 AM - 12:00 PM)</option>
+                          <option>Afternoon (12:00 PM - 4:00 PM)</option>
+                          <option>Evening (4:00 PM - 9:00 PM, Chavara &amp; Nellimukku)</option>
                         </select>
                       </div>
 
@@ -457,7 +454,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
             
-            <div className="lg:col-span-5 flex flex-col justify-between bg-slate-50/70 rounded-3xl p-6 sm:p-8 border border-slate-200/80">
+            {testimonials.length > 0 && <div className="lg:col-span-5 flex flex-col justify-between bg-slate-50/70 rounded-3xl p-6 sm:p-8 border border-slate-200/80">
               <div>
                 <h3 className="text-2xl font-bold text-[#0f2330] font-heading mb-4">
                   {settings.reviewsTitle}
@@ -518,9 +515,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                   </button>
                 </div>
               </div>
-            </div>
+            </div>}
 
-            <div className="lg:col-span-7 flex flex-col justify-between">
+            <div className={`${testimonials.length > 0 ? 'lg:col-span-7' : 'lg:col-span-12'} flex flex-col justify-between`}>
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold text-[#0f2330] font-heading">
