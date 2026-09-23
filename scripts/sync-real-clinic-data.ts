@@ -201,7 +201,9 @@ async function main() {
       ...page,
       heroBadge: page.pageKey === 'about'
         ? 'About Swastik Healthcare'
-        : page.heroBadge,
+        : page.pageKey === 'treatments'
+          ? 'Rehabilitation Care for Every Stage of Recovery'
+          : page.heroBadge,
       heroTitle: page.pageKey === 'about'
         ? 'Mission Wellness Across Kollam.'
         : page.heroTitle,
