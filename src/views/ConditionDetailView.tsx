@@ -57,19 +57,19 @@ export const ConditionDetailView: React.FC<ConditionDetailViewProps> = ({
     <div className="bg-white">
       {/* Breadcrumb Navigation */}
       <div className="bg-slate-50 border-b border-slate-200/80 py-3 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-slate-500">
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-hidden text-xs text-slate-500">
+          <div className="flex min-w-0 items-center gap-2">
             <button
               onClick={() => onNavigate('/conditions')}
-              className="hover:text-slate-900 flex items-center gap-1 font-medium transition-colors"
+              className="flex shrink-0 items-center gap-1 font-medium transition-colors hover:text-slate-900"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Conditions We Treat</span>
             </button>
             <span>/</span>
-            <span className="text-slate-400 font-mono text-[11px]">{condition.bodyAreaLabel}</span>
-            <span>/</span>
-            <span className="text-slate-900 font-semibold truncate max-w-[200px]">{condition.title}</span>
+            <span className="hidden text-slate-400 font-mono text-[11px] sm:inline">{condition.bodyAreaLabel}</span>
+            <span className="hidden sm:inline">/</span>
+            <span className="min-w-0 truncate font-semibold text-slate-900 sm:max-w-[200px]">{condition.title}</span>
           </div>
           <button
             onClick={onOpenBooking}
