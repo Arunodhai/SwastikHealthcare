@@ -45,7 +45,6 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
     preferredDate: '',
     preferredTime: 'morning',
     preferredPractitioner: 'any',
-    subject: 'General Question',
     message: '',
   });
 
@@ -68,7 +67,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
     setIsSubmitting(true);
 
     const message = [
-      'New Enquiry - Swastik Healthcare',
+      'New Appointment Request - Swastik Healthcare',
       '',
       `Name: ${contactForm.name}`,
       `Phone: ${contactForm.phone}`,
@@ -79,8 +78,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
       `Preferred Date: ${contactForm.preferredDate}`,
       `Preferred Time: ${{ morning: 'Morning', midday: 'Afternoon', evening: 'Evening' }[contactForm.preferredTime] || contactForm.preferredTime}`,
       `Practitioner: ${contactForm.preferredPractitioner === 'any' ? 'First Available Physiotherapist' : contactForm.preferredPractitioner}`,
-      `Subject: ${contactForm.subject}`,
-      ...(contactForm.message.trim() ? ['', `Additional Notes: ${contactForm.message.trim()}`] : []),
+      ...((contactForm.message || '').trim() ? [`Notes: ${(contactForm.message || '').trim()}`] : []),
     ].join('\n');
 
     // Open synchronously so the browser treats it as part of the submit action.
@@ -374,33 +372,17 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Subject / Inquiry Type</label>
-                        <select
-                          value={contactForm.subject}
-                          onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
-                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
-                        >
-                          <option>General Question</option>
-                          <option>Home Visit Physiotherapy</option>
-                          <option>Inpatient / Admission Facility</option>
-                          <option>NDIS Support Inquiries</option>
-                          <option>Post-Surgical Protocols</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
-                          Additional Notes (Optional)
-                        </label>
-                        <textarea
-                          rows={4}
-                          placeholder="Add any relevant details or questions for the clinic..."
-                          value={contactForm.message}
-                          onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                        Additional Notes (Optional)
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="Any relevant history or questions for your practitioner..."
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
                     </div>
 
                     <button
