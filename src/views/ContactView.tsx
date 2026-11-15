@@ -4,7 +4,6 @@ import {
   Mail, 
   MapPin, 
   Clock, 
-  MessageCircle, 
   Navigation, 
   CheckCircle2, 
   Send,
@@ -14,7 +13,8 @@ import {
 import { useClinic } from '../context/ClinicContext';
 import { PageHero } from '../components/PageHero';
 import { getManagedPage, getManagedSection } from '../data/pageContent';
-import { openWhatsApp } from '../lib/whatsapp';
+import { APPOINTMENT_WHATSAPP_NUMBER, openWhatsApp } from '../lib/whatsapp';
+import { WhatsAppIcon } from '../components/WhatsAppIcon';
 
 interface ContactViewProps {
   onOpenBooking: () => void;
@@ -90,7 +90,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
     }, 600);
   };
 
-  const cleanPhone = settings.whatsappNumber.replace(/[^0-9]/g, '');
+  const defaultWhatsAppDisplayNumber = `+${APPOINTMENT_WHATSAPP_NUMBER.slice(0, 2)} ${APPOINTMENT_WHATSAPP_NUMBER.slice(2, 7)} ${APPOINTMENT_WHATSAPP_NUMBER.slice(7)}`;
+  const whatsappNumber = settings.whatsappNumber.trim() || defaultWhatsAppDisplayNumber;
+  const cleanPhone = whatsappNumber.replace(/[^0-9]/g, '');
   const encodedMsg = encodeURIComponent(settings.whatsappMessage || '');
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMsg}`;
 
@@ -151,7 +153,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
                   {cleanPhone && <div className="flex items-start gap-3.5">
                     <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[#25D366] shrink-0">
-                      <MessageCircle className="w-5 h-5 fill-current" />
+                      <WhatsAppIcon className="w-5 h-5" />
                     </div>
                     <div>
                       <span className="text-xs text-slate-500 font-semibold block uppercase">{directItems.whatsapp?.label}</span>
@@ -161,7 +163,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                         rel="noopener noreferrer"
                         className="text-sm font-bold text-emerald-700 hover:underline inline-flex items-center gap-1"
                       >
-                        <span>{directItems.whatsapp?.title}</span>
+                        <span>{whatsappNumber}</span>
                       </a>
                     </div>
                   </div>}
