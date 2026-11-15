@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Calendar, CheckCircle, ShieldCheck, User, Phone, Mail, MessageCircle } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
 import { AppointmentFormData } from '../types/clinic';
@@ -40,6 +40,25 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [bookingReference, setBookingReference] = useState('');
   const [whatsappUrl, setWhatsappUrl] = useState('');
 
+  // This modal stays mounted from first paint, when the branch and treatment lists
+  // are still empty. Adopt the default options as soon as Sanity delivers them, so
+  // the submitted message names the same branch the dropdown shows.
+  useEffect(() => {
+    setFormData((prev) => {
+      const locationValid = locations.some((l) => l.id === prev.location);
+      const treatmentValid = treatments.some((t) => t.slug === prev.treatmentSlug);
+      if (locationValid && treatmentValid) return prev;
+
+      return {
+        ...prev,
+        location: locationValid ? prev.location : locations[0]?.id || '',
+        treatmentSlug: treatmentValid
+          ? prev.treatmentSlug
+          : defaultTreatmentSlug || treatments[0]?.slug || '',
+      };
+    });
+  }, [locations, treatments, defaultTreatmentSlug]);
+
   if (!isOpen) return null;
 
   const validate = () => {
@@ -76,7 +95,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     const selectedTreatment = treatments.find((t) => t.slug === formData.treatmentSlug);
     const selectedLocation = locations.find((l: any) => l.id === formData.location);
     const practitioner =
-      formData.preferredPractitioner === 'any'
+      !formData.preferredPractitioner || formData.preferredPractitioner === 'any'
         ? 'First Available Physiotherapist'
         : formData.preferredPractitioner;
 
