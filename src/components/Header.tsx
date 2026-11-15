@@ -71,19 +71,19 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
               type="button"
               id="swastik-brand-cta-button"
               onClick={() => handleLinkClick('/')}
-              className="flex min-w-0 shrink items-center gap-2 sm:gap-2.5 py-0.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2341]/50 focus-visible:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
+              className="flex min-w-0 shrink items-center gap-2 sm:gap-2.5 lg:gap-3 py-0.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2341]/50 focus-visible:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
               aria-label={`${settings.name} Home`}
             >
               <img
                 src={BRAND_EMBLEM_SRC}
                 alt=""
                 aria-hidden="true"
-                className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full object-cover"
+                className="w-11 h-11 sm:w-12 sm:h-12 lg:w-14 lg:h-14 shrink-0 rounded-full object-cover"
               />
               <img
                 src={BRAND_WORDMARK_SRC}
                 alt={`${settings.name} — ${settings.tagline}`}
-                className="h-8 sm:h-10 lg:h-11 w-auto max-w-[9rem] sm:max-w-[15rem] lg:max-w-[17rem] object-contain"
+                className="h-9 sm:h-10 lg:h-10 xl:h-12 w-auto max-w-[13.5rem] sm:max-w-[15rem] lg:max-w-[15rem] xl:max-w-[18rem] object-contain"
               />
             </button>
 
@@ -157,12 +157,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                   src={BRAND_EMBLEM_SRC}
                   alt=""
                   aria-hidden="true"
-                  className="w-10 h-10 shrink-0 rounded-full object-cover"
+                  className="w-11 h-11 shrink-0 rounded-full object-cover"
                 />
                 <img
                   src={BRAND_WORDMARK_SRC}
                   alt={`${settings.name} — ${settings.tagline}`}
-                  className="h-7 w-auto max-w-[11rem] object-contain"
+                  className="h-9 w-auto max-w-[11rem] object-contain"
                 />
               </button>
               <button
