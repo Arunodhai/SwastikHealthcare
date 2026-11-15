@@ -21,7 +21,7 @@ interface ContactViewProps {
 }
 
 export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
-  const { settings: clinicSettings, locations: clinicLocations } = useClinic();
+  const { settings: clinicSettings, locations: clinicLocations, treatments: clinicTreatments, teamMembers: clinicTeamMembers } = useClinic();
   const settings = clinicSettings;
   const page = getManagedPage(settings, 'contact');
   const directSection = getManagedSection(page, 'direct');
@@ -31,13 +31,21 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
   const formItems = Object.fromEntries((formSection?.items || []).map((item) => [item.key, item]));
   const locationItems = Object.fromEntries((locationsSection?.items || []).map((item) => [item.key, item]));
   const locations = clinicLocations;
+  const treatments = clinicTreatments;
+  const teamMembers = clinicTeamMembers;
   const [selectedLocation, setSelectedLocation] = useState(locations[0]?.id || '');
 
   const [contactForm, setContactForm] = useState({
     name: '',
     email: '',
     phone: '',
-    subject: 'General Inquiry / Appointment Question',
+    injuryConcern: '',
+    treatmentSlug: '',
+    preferredLocation: '',
+    preferredDate: '',
+    preferredTime: 'morning',
+    preferredPractitioner: 'any',
+    subject: 'General Question',
     message: '',
   });
 
@@ -49,8 +57,12 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!contactForm.name || !contactForm.phone || !contactForm.email) {
-      alert('Please fill in your name, email and phone number.');
+    if (!contactForm.name.trim() || !contactForm.phone.trim() || !contactForm.email.trim() || !contactForm.injuryConcern.trim() || !contactForm.preferredDate) {
+      alert('Please complete all required fields.');
+      return;
+    }
+    if (contactForm.phone.replace(/[^0-9]/g, '').length < 8) {
+      alert('Please enter a valid phone number.');
       return;
     }
     setIsSubmitting(true);
@@ -61,8 +73,14 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
       `Name: ${contactForm.name}`,
       `Phone: ${contactForm.phone}`,
       `Email: ${contactForm.email}`,
+      `Injury / Concern: ${contactForm.injuryConcern}`,
+      `Treatment / Service: ${treatments.find((t) => t.slug === contactForm.treatmentSlug)?.title || 'Not specified'}`,
+      `Preferred Clinic: ${locations.find((l) => l.id === contactForm.preferredLocation)?.name || 'No preference'}`,
+      `Preferred Date: ${contactForm.preferredDate}`,
+      `Preferred Time: ${{ morning: 'Morning', midday: 'Afternoon', evening: 'Evening' }[contactForm.preferredTime] || contactForm.preferredTime}`,
+      `Practitioner: ${contactForm.preferredPractitioner === 'any' ? 'First Available Physiotherapist' : contactForm.preferredPractitioner}`,
       `Subject: ${contactForm.subject}`,
-      ...(contactForm.message.trim() ? ['', `Message: ${contactForm.message.trim()}`] : []),
+      ...(contactForm.message.trim() ? ['', `Additional Notes: ${contactForm.message.trim()}`] : []),
     ].join('\n');
 
     // Open synchronously so the browser treats it as part of the submit action.
@@ -273,8 +291,92 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
                       <div>
                         <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
-                          Subject / Inquiry Type
+                          Injury or Concern <span className="text-rose-500">*</span>
                         </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Lower back pain, knee injury"
+                          value={contactForm.injuryConcern}
+                          onChange={(e) => setContactForm({ ...contactForm, injuryConcern: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Treatment / Service</label>
+                        <select
+                          value={contactForm.treatmentSlug}
+                          onChange={(e) => setContactForm({ ...contactForm, treatmentSlug: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                        >
+                          <option value="">Not sure yet</option>
+                          {treatments.map((treatment) => (
+                            <option key={treatment.slug} value={treatment.slug}>{treatment.title}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Preferred Clinic Location</label>
+                        <select
+                          value={contactForm.preferredLocation}
+                          onChange={(e) => setContactForm({ ...contactForm, preferredLocation: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                        >
+                          <option value="">No preference</option>
+                          {locations.map((location) => (
+                            <option key={location.id} value={location.id}>{location.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                          Preferred Date <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)}
+                          value={contactForm.preferredDate}
+                          onChange={(e) => setContactForm({ ...contactForm, preferredDate: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Preferred Time Window</label>
+                        <select
+                          value={contactForm.preferredTime}
+                          onChange={(e) => setContactForm({ ...contactForm, preferredTime: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                        >
+                          <option value="morning">Morning</option>
+                          <option value="midday">Afternoon</option>
+                          <option value="evening">Evening</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Practitioner</label>
+                        <select
+                          value={contactForm.preferredPractitioner}
+                          onChange={(e) => setContactForm({ ...contactForm, preferredPractitioner: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                        >
+                          <option value="any">First Available Physiotherapist</option>
+                          {teamMembers.map((member) => (
+                            <option key={member.id} value={member.name}>{member.name} ({member.role})</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Subject / Inquiry Type</label>
                         <select
                           value={contactForm.subject}
                           onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
@@ -287,20 +389,18 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                           <option>Post-Surgical Protocols</option>
                         </select>
                       </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
-                        Your Message or Question
-                      </label>
-                      <textarea
-                        rows={4}
-                        required
-                        placeholder="Please tell us a little bit about your injury, symptom timeline, or how we can assist..."
-                        value={contactForm.message}
-                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                      />
+                      <div>
+                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                          Additional Notes (Optional)
+                        </label>
+                        <textarea
+                          rows={4}
+                          placeholder="Add any relevant details or questions for the clinic..."
+                          value={contactForm.message}
+                          onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
                     </div>
 
                     <button
