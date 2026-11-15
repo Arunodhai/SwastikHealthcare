@@ -205,7 +205,7 @@ async function main() {
           ? 'Rehabilitation Care for Every Stage of Recovery'
           : page.heroBadge,
       heroTitle: page.pageKey === 'about'
-        ? 'Mission Wellness Across Kollam.'
+        ? 'Mission Wellness.'
         : page.heroTitle,
       heroDescription: page.pageKey === 'gallery'
         ? 'General physiotherapy and rehabilitation visuals used across the website. Every image can be replaced in Sanity Studio.'

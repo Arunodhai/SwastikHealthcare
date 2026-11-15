@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, Calendar, CheckCircle, ShieldCheck, User, Phone, Mail } from 'lucide-react';
+import { X, Calendar, CheckCircle, ShieldCheck, User, Phone, Mail, MessageCircle } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
 import { AppointmentFormData } from '../types/clinic';
 import { SwastikEmblem } from './SwastikLogo';
+import { openWhatsApp } from '../lib/whatsapp';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -15,7 +16,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onClose,
   defaultTreatmentSlug,
 }) => {
-  const { treatments: clinicTreatments, teamMembers: clinicTeamMembers, locations: clinicLocations } = useClinic();
+  const { settings: clinicSettings, treatments: clinicTreatments, teamMembers: clinicTeamMembers, locations: clinicLocations } = useClinic();
   const treatments = clinicTreatments;
   const teamMembers = clinicTeamMembers;
   const locations = clinicLocations;
@@ -37,6 +38,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
+  const [whatsappUrl, setWhatsappUrl] = useState('');
 
   if (!isOpen) return null;
 
@@ -69,11 +71,39 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     e.preventDefault();
     if (!validate()) return;
     setIsSubmitting(true);
-    // Simulate immediate confirmation response
+
+    const reference = `MB-${Math.floor(100000 + Math.random() * 900000)}`;
+    const selectedTreatment = treatments.find((t) => t.slug === formData.treatmentSlug);
+    const selectedLocation = locations.find((l: any) => l.id === formData.location);
+    const practitioner =
+      formData.preferredPractitioner === 'any'
+        ? 'First Available Physiotherapist'
+        : formData.preferredPractitioner;
+
+    const message = [
+      'New Appointment Request - Swastik Healthcare',
+      `Reference: ${reference}`,
+      '',
+      `Name: ${formData.fullName}`,
+      `Phone: ${formData.phone}`,
+      `Email: ${formData.email}`,
+      `Injury / Concern: ${formData.injuryConcern}`,
+      `Treatment / Service: ${selectedTreatment?.title || formData.treatmentSlug || 'Not specified'}`,
+      `Preferred Clinic: ${selectedLocation?.name || formData.location || 'Not specified'}`,
+      `Preferred Date: ${formData.preferredDate}`,
+      `Preferred Time: ${formData.preferredTime}`,
+      `Practitioner: ${practitioner}`,
+      ...((formData.message || '').trim() ? [`Notes: ${(formData.message || '').trim()}`] : []),
+    ].join('\n');
+
+    // Open synchronously so the browser treats it as part of the submit action.
+    setWhatsappUrl(openWhatsApp(message, clinicSettings.whatsappNumber));
+    setBookingReference(reference);
+
+    // Keep the brief confirmation animation.
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
-      setBookingReference(`MB-${Math.floor(100000 + Math.random() * 900000)}`);
     }, 600);
   };
 
@@ -92,6 +122,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       message: '',
     });
     setErrors({});
+    setWhatsappUrl('');
     onClose();
   };
 
@@ -147,10 +178,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold text-slate-900 font-heading">
-                  Appointment Request Received!
+                  Almost Done — Send on WhatsApp!
                 </h3>
                 <p className="text-slate-600 text-sm max-w-md mx-auto">
-                  Thank you, <strong className="text-slate-900">{formData.fullName}</strong>. We have registered your booking request under reference:
+                  Thank you, <strong className="text-slate-900">{formData.fullName}</strong>. Your appointment request is prepared under reference:
                 </p>
                 <div className="inline-block bg-slate-100 text-slate-800 font-mono text-sm px-4 py-1.5 rounded-lg font-bold border border-slate-200">
                   {bookingReference}
@@ -162,11 +193,22 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <p><strong>Location:</strong> {locations.find((l: any) => l.id === formData.location)?.name || 'Kollam Branch'}</p>
                 <p><strong>Main Concern:</strong> {formData.injuryConcern}</p>
                 <p className="text-emerald-700 font-medium pt-1">
-                  ✓ The clinic team can use these details to follow up on your request.
+                  ✓ Press <strong>Send</strong> in WhatsApp to deliver this request to our clinic team.
                 </p>
               </div>
 
-              <div className="pt-4 flex justify-center gap-3">
+              <div className="pt-4 flex flex-col sm:flex-row justify-center gap-3">
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider bg-[#25D366] text-white hover:bg-[#20ba59] transition-colors inline-flex items-center justify-center gap-2"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Open WhatsApp Again</span>
+                  </a>
+                )}
                 <button
                   id="booking-success-close-btn"
                   onClick={handleReset}

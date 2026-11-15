@@ -14,6 +14,7 @@ import {
 import { useClinic } from '../context/ClinicContext';
 import { PageHero } from '../components/PageHero';
 import { getManagedPage, getManagedSection } from '../data/pageContent';
+import { openWhatsApp } from '../lib/whatsapp';
 
 interface ContactViewProps {
   onOpenBooking: () => void;
@@ -42,6 +43,7 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [contactWhatsappUrl, setContactWhatsappUrl] = useState('');
 
   const activeLoc = locations.find(l => l.id === selectedLocation) || locations[0];
 
@@ -52,6 +54,20 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
       return;
     }
     setIsSubmitting(true);
+
+    const message = [
+      'New Enquiry - Swastik Healthcare',
+      '',
+      `Name: ${contactForm.name}`,
+      `Phone: ${contactForm.phone}`,
+      `Email: ${contactForm.email}`,
+      `Subject: ${contactForm.subject}`,
+      ...(contactForm.message.trim() ? ['', `Message: ${contactForm.message.trim()}`] : []),
+    ].join('\n');
+
+    // Open synchronously so the browser treats it as part of the submit action.
+    setContactWhatsappUrl(openWhatsApp(message, clinicSettings.whatsappNumber));
+
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -184,9 +200,26 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                     <p className="text-sm text-slate-700 max-w-md mx-auto">
                       {formItems.success?.description}
                     </p>
+                    <p className="text-xs text-slate-600">
+                      Your message is ready in WhatsApp — press <strong>Send</strong> to deliver it to our clinic team.
+                    </p>
+                    {contactWhatsappUrl && (
+                      <a
+                        href={contactWhatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold transition-colors"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Open WhatsApp</span>
+                      </a>
+                    )}
                     <button
-                      onClick={() => setIsSubmitted(false)}
-                      className="text-xs font-bold text-emerald-800 underline pt-2"
+                      onClick={() => {
+                        setIsSubmitted(false);
+                        setContactWhatsappUrl('');
+                      }}
+                      className="text-xs font-bold text-emerald-800 underline pt-2 block mx-auto"
                     >
                       Send another message
                     </button>

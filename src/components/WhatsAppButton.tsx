@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const WhatsAppButton: React.FC = () => {
   const { settings: clinicSettings } = useClinic();
@@ -55,7 +56,7 @@ export const WhatsAppButton: React.FC = () => {
         className="pointer-events-auto group flex items-center gap-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2"
         aria-label="Chat with clinic on WhatsApp"
       >
-        <MessageCircle className="w-5 h-5 fill-current text-white" />
+        <WhatsAppIcon className="w-5 h-5 text-white" />
         <span className="text-xs font-bold tracking-wide hidden sm:inline-block">
           {copy.whatsappButtonLabel}
         </span>

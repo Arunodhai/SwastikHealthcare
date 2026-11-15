@@ -17,12 +17,14 @@ import {
   Briefcase,
   Dumbbell,
   Clock,
-  Sparkles
+  Sparkles,
+  MessageCircle
 } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
 import { SectionHeading } from '../components/SectionHeading';
 import { TreatmentCard } from '../components/TreatmentCard';
 import { ConditionCard } from '../components/ConditionCard';
+import { openWhatsApp } from '../lib/whatsapp';
 
 const iconLookup: Record<string, React.ComponentType<{ className?: string }>> = {
   GraduationCap,
@@ -78,6 +80,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
     preferredTime: 'Any available time',
   });
   const [quickFormSuccess, setQuickFormSuccess] = useState(false);
+  const [quickFormWhatsappUrl, setQuickFormWhatsappUrl] = useState('');
 
   const handleQuickSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +88,21 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
       alert('Please provide your name and contact phone number.');
       return;
     }
+
+    const selectedLocation = locations.find((l) => l.id === quickForm.location);
+    const message = [
+      'New Appointment Request - Swastik Healthcare',
+      '',
+      `Name: ${quickForm.fullName}`,
+      `Phone: ${quickForm.phone}`,
+      `Injury / Concern: ${quickForm.injuryConcern || 'Not specified'}`,
+      `Preferred Clinic: ${selectedLocation?.name || quickForm.location || 'Not specified'}`,
+      `Appointment Type: ${quickForm.appointmentType}`,
+      `Preferred Time: ${quickForm.preferredTime}`,
+    ].join('\n');
+
+    // Open synchronously so the browser treats it as part of the submit action.
+    setQuickFormWhatsappUrl(openWhatsApp(message, settings.whatsappNumber));
     setQuickFormSuccess(true);
   };
 
@@ -321,10 +339,24 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                       <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
                       <h4 className="font-bold font-heading text-lg">Thank You!</h4>
                       <p className="text-xs text-slate-700">
-                        We have received your appointment request. One of our clinical coordinators will call you shortly on <strong>{quickForm.phone}</strong> to confirm your slot.
+                        Your request is ready in WhatsApp. Press <strong>Send</strong> to deliver it to our clinic team, who will call you on <strong>{quickForm.phone}</strong> to confirm your slot.
                       </p>
+                      {quickFormWhatsappUrl && (
+                        <a
+                          href={quickFormWhatsappUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold transition-colors"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>Open WhatsApp</span>
+                        </a>
+                      )}
                       <button
-                        onClick={() => setQuickFormSuccess(false)}
+                        onClick={() => {
+                          setQuickFormSuccess(false);
+                          setQuickFormWhatsappUrl('');
+                        }}
                         className="text-xs font-bold underline text-emerald-800 pt-2"
                       >
                         Submit another inquiry
