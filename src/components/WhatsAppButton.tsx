@@ -46,20 +46,17 @@ export const WhatsAppButton: React.FC = () => {
         </div>
       )}
 
-      {/* Main floating pill button */}
+      {/* Floating WhatsApp icon button */}
       <a
         id="floating-whatsapp-btn"
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
         onMouseEnter={() => setShowTooltip(true)}
-        className="pointer-events-auto group flex items-center gap-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2"
+        className="pointer-events-auto group flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-white text-[#25D366] shadow-lg transition-all hover:-translate-y-1 hover:bg-emerald-50 hover:shadow-xl active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2"
         aria-label="Chat with clinic on WhatsApp"
       >
-        <WhatsAppIcon className="w-5 h-5 text-white" />
-        <span className="text-xs font-bold tracking-wide hidden sm:inline-block">
-          {copy.whatsappButtonLabel}
-        </span>
+        <WhatsAppIcon className="h-7 w-7" />
       </a>
     </div>
   );
