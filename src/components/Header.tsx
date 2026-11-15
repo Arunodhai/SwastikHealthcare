@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Phone, Menu, X, ChevronRight } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
-import { ClinicBrand } from './SwastikLogo';
+
+// Official brand artwork (dropped into public/images/brand/)
+const BRAND_EMBLEM_SRC = '/images/brand/swastik-emblem.png';
+const BRAND_WORDMARK_SRC = '/images/brand/swastik-wordmark.png';
 
 interface HeaderProps {
   currentPath: string;
@@ -63,16 +66,26 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px -z-10 bg-gradient-to-r from-transparent via-white/80 to-transparent" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex items-center justify-between">
-            {/* Swastik Healthcare Brand Lockup & Circular Emblem */}
-            <ClinicBrand
-              name={settings.name}
-              tagline={settings.tagline}
-              theme="lime"
+            {/* Swastik Healthcare Brand Lockup: official emblem + wordmark */}
+            <button
+              type="button"
+              id="swastik-brand-cta-button"
               onClick={() => handleLinkClick('/')}
-              size="md"
-              className="py-0.5"
-              emblemClassName="w-10 h-10 sm:w-11 sm:h-11 ring-2 ring-white/80 bg-white rounded-full shadow-xs shrink-0"
-            />
+              className="flex min-w-0 shrink items-center gap-2 sm:gap-2.5 py-0.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2341]/50 focus-visible:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
+              aria-label={`${settings.name} Home`}
+            >
+              <img
+                src={BRAND_EMBLEM_SRC}
+                alt=""
+                aria-hidden="true"
+                className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full object-cover"
+              />
+              <img
+                src={BRAND_WORDMARK_SRC}
+                alt={`${settings.name} — ${settings.tagline}`}
+                className="h-8 sm:h-10 lg:h-11 w-auto max-w-[9rem] sm:max-w-[15rem] lg:max-w-[17rem] object-contain"
+              />
+            </button>
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
@@ -134,12 +147,24 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
         <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-end">
           <div className="w-full max-w-sm bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <ClinicBrand
-                name={settings.name}
-                tagline={settings.tagline}
+              <button
+                type="button"
                 onClick={() => handleLinkClick('/')}
-                size="sm"
-              />
+                className="flex min-w-0 items-center gap-2 text-left"
+                aria-label={`${settings.name} Home`}
+              >
+                <img
+                  src={BRAND_EMBLEM_SRC}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-10 h-10 shrink-0 rounded-full object-cover"
+                />
+                <img
+                  src={BRAND_WORDMARK_SRC}
+                  alt={`${settings.name} — ${settings.tagline}`}
+                  className="h-7 w-auto max-w-[11rem] object-contain"
+                />
+              </button>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
