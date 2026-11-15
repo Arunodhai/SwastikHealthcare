@@ -184,15 +184,6 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                     ))}
                   </div>
                 </div>
-
-                {/* Direct CTA */}
-                <button
-                  onClick={onOpenBooking}
-                  className="w-full py-3 px-4 rounded-xl text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center justify-center gap-2"
-                >
-                  <Calendar className="w-4 h-4 text-[#0f2330]" />
-                  <span>{directSection?.ctaLabel}</span>
-                </button>
               </div>
             </div>
 
@@ -388,10 +379,10 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-6 py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-[#0f2330] hover:bg-[#193b50] text-white shadow transition-all flex items-center gap-2"
+                      className="px-6 py-3 rounded-full text-xs uppercase tracking-wider font-bold bg-[#a3e635] hover:bg-[#8fd622] text-[#0f2330] shadow transition-all flex items-center gap-2"
                     >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>{isSubmitting ? 'Sending...' : formSection?.ctaLabel}</span>
+                      <Calendar className="w-4 h-4" />
+                      <span>{isSubmitting ? 'Preparing Request...' : 'Request an Appointment'}</span>
                     </button>
                   </form>
                 )}
