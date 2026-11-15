@@ -152,15 +152,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                   </div>}
 
                   {cleanPhone && <div className="flex items-start gap-3.5">
-                    <a
-                      href={whatsappUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label="Chat with the clinic on WhatsApp"
-                      className="w-12 h-12 rounded-full bg-[#25D366] hover:bg-[#20ba59] flex items-center justify-center text-white shrink-0 shadow-sm transition-colors"
-                    >
-                      <WhatsAppIcon className="w-6 h-6" />
-                    </a>
+                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[#25D366] shrink-0">
+                      <WhatsAppIcon className="w-5 h-5" />
+                    </div>
                     <div>
                       <span className="text-xs text-slate-500 font-semibold block uppercase">{directItems.whatsapp?.label}</span>
                       <a
