@@ -17,7 +17,7 @@ import { StudioView } from './views/StudioView';
 
 const DEFAULT_TITLE = 'Swastik Healthcare | Physiotherapy & Rehabilitation Clinic';
 const DEFAULT_DESCRIPTION = 'Physiotherapy and rehabilitation care focused on restoring mobility, reducing pain and supporting lasting recovery.';
-const DEFAULT_SOCIAL_IMAGE = 'https://www.swastikrehab.com/images/swastik-share-preview.jpg';
+const DEFAULT_SOCIAL_IMAGE = 'https://www.swastikrehab.com/images/swastik-share-preview-v2.jpg';
 
 function setMetaTag(selector: string, attribute: 'name' | 'property', key: string, content?: string) {
   let element = document.head.querySelector<HTMLMetaElement>(selector);
@@ -124,6 +124,8 @@ function AppContent() {
     setMetaTag('meta[property="og:description"]', 'property', 'og:description', description);
     setMetaTag('meta[property="og:url"]', 'property', 'og:url', canonicalUrl);
     setMetaTag('meta[property="og:image"]', 'property', 'og:image', socialImage || DEFAULT_SOCIAL_IMAGE);
+    setMetaTag('meta[property="og:image:width"]', 'property', 'og:image:width', socialImage ? undefined : '1200');
+    setMetaTag('meta[property="og:image:height"]', 'property', 'og:image:height', socialImage ? undefined : '630');
     setMetaTag('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image');
     setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', title);
     setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', description);
