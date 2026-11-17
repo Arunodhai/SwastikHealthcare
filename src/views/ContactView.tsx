@@ -237,12 +237,14 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                        <label htmlFor="contact-name" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
                           Your Name <span className="text-rose-500">*</span>
                         </label>
                         <input
+                          id="contact-name"
                           type="text"
                           required
+                          autoComplete="name"
                           placeholder="e.g. David Miller"
                           value={contactForm.name}
                           onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
@@ -251,12 +253,14 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                        <label htmlFor="contact-phone" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
                           Phone Number <span className="text-rose-500">*</span>
                         </label>
                         <input
+                          id="contact-phone"
                           type="tel"
                           required
+                          autoComplete="tel"
                           placeholder="e.g. 0412 345 678"
                           value={contactForm.phone}
                           onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
@@ -267,12 +271,14 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                        <label htmlFor="contact-email" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
                           Email Address <span className="text-rose-500">*</span>
                         </label>
                         <input
+                          id="contact-email"
                           type="email"
                           required
+                          autoComplete="email"
                           placeholder="e.g. david@example.com"
                           value={contactForm.email}
                           onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
@@ -281,10 +287,11 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                        <label htmlFor="contact-injury" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
                           Injury or Concern <span className="text-rose-500">*</span>
                         </label>
                         <input
+                          id="contact-injury"
                           type="text"
                           required
                           placeholder="e.g. Lower back pain, knee injury"
@@ -297,8 +304,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Treatment / Service</label>
+                        <label htmlFor="contact-treatment" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Treatment / Service</label>
                         <select
+                          id="contact-treatment"
                           value={contactForm.treatmentSlug}
                           onChange={(e) => setContactForm({ ...contactForm, treatmentSlug: e.target.value })}
                           className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -310,8 +318,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Preferred Clinic Location</label>
+                        <label htmlFor="contact-location" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Preferred Clinic Location</label>
                         <select
+                          id="contact-location"
                           value={contactForm.preferredLocation}
                           onChange={(e) => setContactForm({ ...contactForm, preferredLocation: e.target.value })}
                           className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -326,10 +335,11 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                        <label htmlFor="contact-date" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
                           Preferred Date <span className="text-rose-500">*</span>
                         </label>
                         <input
+                          id="contact-date"
                           type="date"
                           required
                           min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)}
@@ -339,8 +349,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Preferred Time Window</label>
+                        <label htmlFor="contact-time" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Preferred Time Window</label>
                         <select
+                          id="contact-time"
                           value={contactForm.preferredTime}
                           onChange={(e) => setContactForm({ ...contactForm, preferredTime: e.target.value })}
                           className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -351,8 +362,9 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Practitioner</label>
+                        <label htmlFor="contact-practitioner" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">Practitioner</label>
                         <select
+                          id="contact-practitioner"
                           value={contactForm.preferredPractitioner}
                           onChange={(e) => setContactForm({ ...contactForm, preferredPractitioner: e.target.value })}
                           className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -366,10 +378,11 @@ export const ContactView: React.FC<ContactViewProps> = ({ onOpenBooking }) => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
+                      <label htmlFor="contact-message" className="block text-xs font-semibold uppercase text-slate-700 mb-1.5">
                         Additional Notes (Optional)
                       </label>
                       <textarea
+                        id="contact-message"
                         rows={2}
                         placeholder="Any relevant history or questions for your practitioner..."
                         value={contactForm.message}

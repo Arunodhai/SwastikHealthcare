@@ -67,10 +67,13 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex items-center justify-between">
             {/* Swastik Healthcare Brand Lockup: official emblem + wordmark */}
-            <button
-              type="button"
+            <a
               id="swastik-brand-cta-button"
-              onClick={() => handleLinkClick('/')}
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('/');
+              }}
               className="flex min-w-0 shrink items-center gap-2 sm:gap-2.5 lg:gap-3 py-0.5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0b2341]/50 focus-visible:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
               aria-label={`${settings.name} Home`}
             >
@@ -85,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                 alt={`${settings.name} — ${settings.tagline}`}
                 className="h-9 sm:h-10 lg:h-10 xl:h-12 w-auto max-w-[13.5rem] sm:max-w-[15rem] lg:max-w-[15rem] xl:max-w-[18rem] object-contain"
               />
-            </button>
+            </a>
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center gap-3 xl:gap-5">
@@ -96,11 +99,15 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                     : currentPath.startsWith(item.path);
 
                 return (
-                  <button
+                  <a
                     key={item.path}
                     id={`nav-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-                    onClick={() => handleLinkClick(item.path)}
-                    className={`relative py-2 text-[13px] xl:text-[14px] whitespace-nowrap transition-colors duration-200 ${
+                    href={item.path}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(item.path);
+                    }}
+                    className={`inline-block relative py-2 text-[13px] xl:text-[14px] whitespace-nowrap transition-colors duration-200 ${
                       isActive
                         ? 'text-[#0b2341] font-bold'
                         : 'text-[#0b2341]/75 hover:text-[#0b2341] font-semibold'
@@ -110,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                     {isActive && (
                       <span className="absolute bottom-0 left-1/2 h-0.5 w-7 -translate-x-1/2 rounded-full bg-[#0b2341]" />
                     )}
-                  </button>
+                  </a>
                 );
               })}
             </nav>
@@ -147,9 +154,12 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
         <div className="lg:hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-end">
           <div className="w-full max-w-sm bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-              <button
-                type="button"
-                onClick={() => handleLinkClick('/')}
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLinkClick('/');
+                }}
                 className="flex min-w-0 items-center gap-2 text-left"
                 aria-label={`${settings.name} Home`}
               >
@@ -164,7 +174,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                   alt={`${settings.name} — ${settings.tagline}`}
                   className="h-9 w-auto max-w-[11rem] object-contain"
                 />
-              </button>
+              </a>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
@@ -182,9 +192,13 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                     : currentPath.startsWith(item.path);
 
                 return (
-                  <button
+                  <a
                     key={item.path}
-                    onClick={() => handleLinkClick(item.path)}
+                    href={item.path}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleLinkClick(item.path);
+                    }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-left font-medium transition-colors ${
                       isActive
                         ? 'bg-slate-100 text-[#0f2330] font-semibold'
@@ -193,7 +207,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate, onOpenB
                   >
                     <span>{item.label}</span>
                     <ChevronRight className="w-4 h-4 text-slate-400" />
-                  </button>
+                  </a>
                 );
               })}
             </nav>

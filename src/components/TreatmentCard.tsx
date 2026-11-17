@@ -64,13 +64,17 @@ export const TreatmentCard: React.FC<TreatmentCardProps> = ({ treatment, onSelec
 
         {/* Card Footer Action Links */}
         <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-          <button
-            onClick={() => onSelect(treatment.slug)}
+          <a
+            href={`/treatments/${treatment.slug}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onSelect(treatment.slug);
+            }}
             className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 group-hover:underline transition-colors"
           >
             <span>Learn More</span>
             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          </a>
           <button
             onClick={() => onBook(treatment.slug)}
             className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-100 hover:bg-[#a3e635] text-slate-800 hover:text-[#0f2330] transition-colors"

@@ -63,6 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
               tagline={clinic.tagline}
               theme="dark"
               size="md"
+              href="/"
               onClick={() => onNavigate('/')}
             />
             <p className="text-slate-400 text-xs leading-relaxed max-w-sm pt-1">
@@ -102,10 +103,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenBooking }) => 
               {copy.footerClinicHeading}
             </h4>
             <ul className="space-y-3 text-xs">
-              <li><button onClick={() => onNavigate('/about')} className="hover:text-white transition-colors">{copy.footerAboutLabel}</button></li>
-              <li><button onClick={() => onNavigate('/about#team')} className="hover:text-white transition-colors">{copy.footerTeamLabel}</button></li>
-              <li><button onClick={() => onNavigate('/gallery')} className="hover:text-white transition-colors">{copy.footerGalleryLabel}</button></li>
-              <li><button onClick={() => onNavigate('/contact')} className="hover:text-white transition-colors">{copy.footerLocationsLabel}</button></li>
+              <li><a href="/about" onClick={(e) => { e.preventDefault(); onNavigate('/about'); }} className="hover:text-white transition-colors">{copy.footerAboutLabel}</a></li>
+              <li><a href="/about#team" onClick={(e) => { e.preventDefault(); onNavigate('/about#team'); }} className="hover:text-white transition-colors">{copy.footerTeamLabel}</a></li>
+              <li><a href="/gallery" onClick={(e) => { e.preventDefault(); onNavigate('/gallery'); }} className="hover:text-white transition-colors">{copy.footerGalleryLabel}</a></li>
+              <li><a href="/contact" onClick={(e) => { e.preventDefault(); onNavigate('/contact'); }} className="hover:text-white transition-colors">{copy.footerLocationsLabel}</a></li>
               <li>
                 <button onClick={onOpenBooking} className="text-lime-400 font-semibold hover:text-lime-300 transition-colors inline-flex items-center gap-1.5">
                   <span>{copy.footerBookingLinkLabel}</span>

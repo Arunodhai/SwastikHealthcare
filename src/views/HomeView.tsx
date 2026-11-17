@@ -366,12 +366,14 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                     <form onSubmit={handleQuickSubmit} className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
+                          <label htmlFor="quick-full-name" className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
                             Full Name
                           </label>
                           <input
+                            id="quick-full-name"
                             type="text"
                             required
+                            autoComplete="name"
                             placeholder="Full Name"
                             value={quickForm.fullName}
                             onChange={(e) => setQuickForm({ ...quickForm, fullName: e.target.value })}
@@ -379,12 +381,14 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                           />
                         </div>
                         <div>
-                          <label className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
+                          <label htmlFor="quick-phone" className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
                             Phone
                           </label>
                           <input
+                            id="quick-phone"
                             type="tel"
                             required
+                            autoComplete="tel"
                             placeholder="Your contact number"
                             value={quickForm.phone}
                             onChange={(e) => setQuickForm({ ...quickForm, phone: e.target.value })}
@@ -394,10 +398,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
+                        <label htmlFor="quick-concern" className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
                           Injury or Concern
                         </label>
                         <input
+                          id="quick-concern"
                           type="text"
                           placeholder="e.g. Lower Back Pain, Knee Injury"
                           value={quickForm.injuryConcern}
@@ -408,10 +413,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
+                          <label htmlFor="quick-location" className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
                             Preferred Clinic Location
                           </label>
                           <select
+                            id="quick-location"
                             value={quickForm.location}
                             onChange={(e) => setQuickForm({ ...quickForm, location: e.target.value })}
                             className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -424,10 +430,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                           </select>
                         </div>
                         <div>
-                          <label className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
+                          <label htmlFor="quick-treatment" className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
                             Appointment Type
                           </label>
                           <select
+                            id="quick-treatment"
                             value={quickForm.appointmentType}
                             onChange={(e) => setQuickForm({ ...quickForm, appointmentType: e.target.value })}
                             className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -438,10 +445,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                       </div>
 
                       <div>
-                        <label className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
+                        <label htmlFor="quick-time" className="block text-[11px] font-semibold uppercase text-slate-700 mb-1">
                           Preferred Time Window
                         </label>
                         <select
+                          id="quick-time"
                           value={quickForm.preferredTime}
                           onChange={(e) => setQuickForm({ ...quickForm, preferredTime: e.target.value })}
                           className="w-full px-3 py-2 text-xs rounded-lg border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -524,14 +532,18 @@ export const HomeView: React.FC<HomeViewProps> = ({ onNavigate, onOpenBooking })
                       </div>
                     )}
                     <div className="mt-7">
-                      <button
+                      <a
                         id="meet-team-view-btn"
-                        onClick={() => onNavigate('/about#team')}
+                        href="/about#team"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onNavigate('/about#team');
+                        }}
                         className="px-6 py-3 rounded-full text-xs font-bold bg-[#0f2330] hover:bg-[#193b50] text-white transition-colors inline-flex items-center gap-2"
                       >
                         <span>{copy.homeTeamCtaLabel}</span>
                         <ArrowRight className="w-4 h-4" />
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>

@@ -214,6 +214,7 @@ interface ClinicBrandProps {
   showTagline?: boolean;
   emblemClassName?: string;
   onClick?: () => void;
+  href?: string;
   className?: string;
   name?: string;
   tagline?: string;
@@ -225,6 +226,7 @@ export const ClinicBrand: React.FC<ClinicBrandProps> = ({
   showTagline = true,
   emblemClassName,
   onClick,
+  href,
   className = '',
   name = '',
   tagline = '',
@@ -243,17 +245,22 @@ export const ClinicBrand: React.FC<ClinicBrandProps> = ({
     </div>
   );
 
-  if (onClick) {
+  if (onClick || href) {
     return (
-      <button
-        type="button"
-        id="swastik-brand-cta-button"
-        onClick={onClick}
-        className="text-left group focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
+      <a
+        id="clinic-brand-cta-button"
+        href={href || '/'}
+        onClick={(event) => {
+          if (onClick) {
+            event.preventDefault();
+            onClick();
+          }
+        }}
+        className="inline-flex text-left group focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 rounded-xl transition-transform active:scale-[0.98]"
         aria-label={`${name} Home`}
       >
         {content}
-      </button>
+      </a>
     );
   }
 

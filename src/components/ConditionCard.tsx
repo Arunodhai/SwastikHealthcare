@@ -59,13 +59,17 @@ export const ConditionCard: React.FC<ConditionCardProps> = ({ condition, onSelec
 
       {/* Action footer */}
       <div className="mt-5 pt-4 border-t border-slate-200/70 flex items-center justify-between gap-2">
-        <button
-          onClick={() => onSelect(condition.slug)}
+        <a
+          href={`/conditions/${condition.slug}`}
+          onClick={(e) => {
+            e.preventDefault();
+            onSelect(condition.slug);
+          }}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 group-hover:underline"
         >
           <span>Treatment Details</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </button>
+        </a>
         <button
           onClick={onBook}
           className="text-xs font-semibold text-slate-600 hover:text-[#0f2330] hover:bg-slate-200/60 px-3 py-1.5 rounded-lg transition-colors"

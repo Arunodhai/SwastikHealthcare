@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { CustomPage } from './types/clinic';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { WhatsAppButton } from './components/WhatsAppButton';
@@ -14,6 +15,7 @@ import { GalleryView } from './views/GalleryView';
 import { ContactView } from './views/ContactView';
 import { CustomPageView } from './views/CustomPageView';
 import { StudioView } from './views/StudioView';
+import { NotFoundView } from './views/NotFoundView';
 
 const DEFAULT_TITLE = 'Swastik Healthcare | Physiotherapy & Rehabilitation Clinic';
 const DEFAULT_DESCRIPTION = 'Physiotherapy and rehabilitation care focused on restoring mobility, reducing pain and supporting lasting recovery.';
@@ -43,41 +45,111 @@ function setCanonicalUrl(url: string) {
   element.href = url;
 }
 
+function splitLocation(): { path: string; hash: string } {
+  if (typeof window === 'undefined') return { path: '/', hash: '' };
+
+  const rawHash = window.location.hash.replace(/^#/, '');
+
+  // Legacy hash routes such as #/studio or #/treatments/sports-injury still
+  // resolve as full paths. A regular in-page anchor such as #team is returned
+  // separately so it can be used for scrolling, not routing.
+  if (rawHash.startsWith('/')) return { path: rawHash, hash: '' };
+
+  return {
+    path: window.location.pathname || '/',
+    hash: rawHash,
+  };
+}
+
 function getInitialPath(): string {
-  if (typeof window !== 'undefined') {
-    const hash = window.location.hash.replace(/^#/, '');
-    if (hash.startsWith('/studio')) return hash;
-    const path = window.location.pathname;
-    if (path.startsWith('/studio')) return path;
-    if (hash) return hash;
-    return path || '/';
+  return splitLocation().path;
+}
+
+function isKnownPath(path: string, customPages: CustomPage[]): boolean {
+  if (path === '' || path === '/') return true;
+  if (['/about', '/treatments', '/conditions', '/gallery', '/contact'].includes(path)) return true;
+  if (path.startsWith('/treatments/') || path.startsWith('/conditions/')) return true;
+  if (path === '/studio' || path.startsWith('/studio/')) return true;
+  if (path.startsWith('/pages/')) {
+    const slug = path.replace('/pages/', '');
+    return customPages.some((page) => page.slug === slug);
   }
-  return '/';
+  return false;
 }
 
 function AppContent() {
-  const { customPages } = useClinic();
+  const { customPages, treatments, conditions, isLoading } = useClinic();
 
   const [currentPath, setCurrentPath] = useState<string>(getInitialPath);
+  const [navigationVersion, setNavigationVersion] = useState(0);
 
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedBookingTreatmentSlug, setSelectedBookingTreatmentSlug] = useState<string | undefined>();
 
+  // A well-formed detail URL can still point at a slug that no longer exists.
+  // Check against loaded content so those pages aren't indexed as soft 404s.
+  const detailSlug = currentPath.startsWith('/treatments/')
+    ? { type: 'treatment' as const, slug: currentPath.replace('/treatments/', '') }
+    : currentPath.startsWith('/conditions/')
+      ? { type: 'condition' as const, slug: currentPath.replace('/conditions/', '') }
+      : null;
+
+  const isMissingDetail =
+    !isLoading &&
+    detailSlug !== null &&
+    !(detailSlug.type === 'treatment' ? treatments : conditions).some(
+      (item) => item.slug === detailSlug.slug,
+    );
+
   useEffect(() => {
-    const handlePopState = () => {
-      const hash = window.location.hash.replace(/^#/, '');
-      const path = window.location.pathname;
-      if (path.startsWith('/studio')) {
-        setCurrentPath(path);
-      } else if (hash) {
-        setCurrentPath(hash);
-      } else {
-        setCurrentPath(path || '/');
-      }
+    const handleLocationChange = () => {
+      setCurrentPath(splitLocation().path);
+      setNavigationVersion((version) => version + 1);
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
+
+  // Scroll to in-page anchors (e.g. /about#team) once the target section has
+  // rendered. Sanity content can arrive after the first paint, so retry briefly.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const { hash } = splitLocation();
+    if (!hash) return;
+
+    let targetId = hash;
+    try {
+      targetId = decodeURIComponent(hash);
+    } catch {
+      targetId = hash;
+    }
+
+    let attempts = 0;
+    let timer: number | undefined;
+
+    const scrollToTarget = () => {
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+      if (attempts < 40) {
+        attempts += 1;
+        timer = window.setTimeout(scrollToTarget, 100);
+        return;
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    timer = window.setTimeout(scrollToTarget, 0);
+    return () => {
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [currentPath, navigationVersion, customPages]);
 
   useEffect(() => {
     let title = DEFAULT_TITLE;
@@ -114,6 +186,13 @@ function AppContent() {
       title = 'Sanity Studio | Swastik Healthcare';
     }
 
+    if (!isKnownPath(currentPath, customPages) || isMissingDetail) {
+      title = 'Page Not Found | Swastik Healthcare';
+      description = 'The page you are looking for could not be found.';
+      socialImage = undefined;
+      noIndex = true;
+    }
+
     const canonicalUrl = `${window.location.origin}${currentPath === '' ? '/' : currentPath}`;
     document.title = title;
     setCanonicalUrl(canonicalUrl);
@@ -130,14 +209,21 @@ function AppContent() {
     setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', title);
     setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', description);
     setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', socialImage || DEFAULT_SOCIAL_IMAGE);
-  }, [currentPath, customPages]);
+  }, [currentPath, customPages, isMissingDetail]);
 
-  const navigate = (path: string) => {
-    setCurrentPath(path);
+  const navigate = (target: string) => {
+    const [pathname, hash = ''] = target.split('#');
+    const nextPath = pathname || '/';
+
+    setCurrentPath(nextPath);
+    setNavigationVersion((version) => version + 1);
+
     if (typeof window !== 'undefined') {
-      window.history.pushState({}, '', path);
+      window.history.pushState({}, '', hash ? `${nextPath}#${hash}` : nextPath);
+      if (!hash) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenBooking = (treatmentSlug?: string) => {
@@ -231,9 +317,8 @@ function AppContent() {
     }
 
     return (
-      <HomeView
+      <NotFoundView
         onNavigate={navigate}
-        onOpenBooking={handleOpenBooking}
       />
     );
   };

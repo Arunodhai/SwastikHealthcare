@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { X, Calendar, CheckCircle, ShieldCheck, User, Phone, Mail, MessageCircle } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext';
 import { AppointmentFormData } from '../types/clinic';
@@ -39,6 +39,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
   const [whatsappUrl, setWhatsappUrl] = useState('');
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   // This modal stays mounted from first paint, when the branch and treatment lists
   // are still empty. Adopt the default options as soon as Sanity delivers them, so
@@ -58,6 +61,68 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       };
     });
   }, [locations, treatments, defaultTreatmentSlug]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const dialog = dialogRef.current;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const focusableSelector =
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    const getFocusable = () =>
+      dialog
+        ? Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+            (element) => element.offsetParent !== null,
+          )
+        : [];
+
+    const focusFirstField = () => {
+      const firstInput = dialog?.querySelector<HTMLElement>('input[placeholder="Your full name"]');
+      (firstInput || getFocusable()[0] || dialog)?.focus();
+    };
+
+    // Move focus in immediately, then retry once in case the panel was still
+    // animating in and not yet focusable.
+    focusFirstField();
+    const focusTimer = window.setTimeout(focusFirstField, 50);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusable = getFocusable();
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousBodyOverflow;
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -146,9 +211,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
-      <div 
-        className="relative w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-auto"
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-modal-title"
+        tabIndex={-1}
+        className="relative w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-auto focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
@@ -175,7 +248,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             </div>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold font-heading text-white tracking-tight">
+          <h2 id="booking-modal-title" className="text-xl sm:text-2xl font-bold font-heading text-white tracking-tight">
             Schedule Your Rehabilitation Consultation
           </h2>
           <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-lg">
@@ -191,7 +264,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         {/* Modal Body */}
         <div className="p-6 sm:p-8 max-h-[75vh] overflow-y-auto">
           {isSuccess ? (
-            <div className="py-8 text-center space-y-4">
+            <div className="py-8 text-center space-y-4" aria-live="polite">
               <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
                 <CheckCircle className="w-9 h-9" />
               </div>
@@ -242,89 +315,102 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Row 1: Personal Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-full-name" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Full Name <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <input
+                      id="booking-full-name"
                       type="text"
                       placeholder="Your full name"
                       value={formData.fullName}
                       onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      aria-invalid={Boolean(errors.fullName)}
+                      aria-describedby={errors.fullName ? 'booking-full-name-error' : undefined}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
                         errors.fullName ? 'border-rose-400 bg-rose-50/20' : 'border-slate-200 bg-white'
                       }`}
                     />
                     <User className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
                   </div>
-                  {errors.fullName && <p className="text-rose-600 text-xs mt-1">{errors.fullName}</p>}
+                  {errors.fullName && <p id="booking-full-name-error" role="alert" className="text-rose-600 text-xs mt-1">{errors.fullName}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-phone" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Phone Number <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <input
+                      id="booking-phone"
                       type="tel"
                       placeholder="e.g. 0400 123 456"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      aria-invalid={Boolean(errors.phone)}
+                      aria-describedby={errors.phone ? 'booking-phone-error' : undefined}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
                         errors.phone ? 'border-rose-400 bg-rose-50/20' : 'border-slate-200 bg-white'
                       }`}
                     />
                     <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
                   </div>
-                  {errors.phone && <p className="text-rose-600 text-xs mt-1">{errors.phone}</p>}
+                  {errors.phone && <p id="booking-phone-error" role="alert" className="text-rose-600 text-xs mt-1">{errors.phone}</p>}
                 </div>
               </div>
 
               {/* Row 2: Email & Concern */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-email" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Email Address <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <input
+                      id="booking-email"
                       type="email"
                       placeholder="e.g. sarah@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      aria-invalid={Boolean(errors.email)}
+                      aria-describedby={errors.email ? 'booking-email-error' : undefined}
                       className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
                         errors.email ? 'border-rose-400 bg-rose-50/20' : 'border-slate-200 bg-white'
                       }`}
                     />
                     <Mail className="w-4 h-4 text-slate-400 absolute right-3.5 top-3 pointer-events-none" />
                   </div>
-                  {errors.email && <p className="text-rose-600 text-xs mt-1">{errors.email}</p>}
+                  {errors.email && <p id="booking-email-error" role="alert" className="text-rose-600 text-xs mt-1">{errors.email}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-injury" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Injury or Concern <span className="text-rose-500">*</span>
                   </label>
                   <input
+                    id="booking-injury"
                     type="text"
                     placeholder="e.g. Lower back pain, right knee sprain"
                     value={formData.injuryConcern}
                     onChange={(e) => setFormData({ ...formData, injuryConcern: e.target.value })}
+                    aria-invalid={Boolean(errors.injuryConcern)}
+                    aria-describedby={errors.injuryConcern ? 'booking-injury-error' : undefined}
                     className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${
                       errors.injuryConcern ? 'border-rose-400 bg-rose-50/20' : 'border-slate-200 bg-white'
                     }`}
                   />
-                  {errors.injuryConcern && <p className="text-rose-600 text-xs mt-1">{errors.injuryConcern}</p>}
+                  {errors.injuryConcern && <p id="booking-injury-error" role="alert" className="text-rose-600 text-xs mt-1">{errors.injuryConcern}</p>}
                 </div>
               </div>
 
               {/* Row 3: Service & Clinic Location */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-treatment" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Treatment / Service
                   </label>
                   <select
+                    id="booking-treatment"
                     value={formData.treatmentSlug}
                     onChange={(e) => setFormData({ ...formData, treatmentSlug: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -338,10 +424,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-location" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Preferred Clinic Location
                   </label>
                   <select
+                    id="booking-location"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -358,26 +445,30 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Row 4: Date & Time Preferences */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-date" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Preferred Date <span className="text-rose-500">*</span>
                   </label>
                   <input
+                    id="booking-date"
                     type="date"
                     min={new Date().toISOString().split('T')[0]}
                     value={formData.preferredDate}
                     onChange={(e) => setFormData({ ...formData, preferredDate: e.target.value })}
+                    aria-invalid={Boolean(errors.preferredDate)}
+                    aria-describedby={errors.preferredDate ? 'booking-date-error' : undefined}
                     className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white ${
                       errors.preferredDate ? 'border-rose-400 bg-rose-50/20' : 'border-slate-200'
                     }`}
                   />
-                  {errors.preferredDate && <p className="text-rose-600 text-xs mt-1">{errors.preferredDate}</p>}
+                  {errors.preferredDate && <p id="booking-date-error" role="alert" className="text-rose-600 text-xs mt-1">{errors.preferredDate}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-time" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Preferred Time Window
                   </label>
                   <select
+                    id="booking-time"
                     value={formData.preferredTime}
                     onChange={(e) => setFormData({ ...formData, preferredTime: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -389,10 +480,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                  <label htmlFor="booking-practitioner" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                     Practitioner
                   </label>
                   <select
+                    id="booking-practitioner"
                     value={formData.preferredPractitioner}
                     onChange={(e) => setFormData({ ...formData, preferredPractitioner: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -409,10 +501,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {/* Row 5: Optional Message */}
               <div>
-                <label className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
+                <label htmlFor="booking-notes" className="block text-xs font-semibold text-slate-800 uppercase tracking-wide mb-1.5">
                   Additional Notes (Optional)
                 </label>
                 <textarea
+                  id="booking-notes"
                   rows={2}
                   placeholder="Any relevant past history, scan results, or questions for your practitioner..."
                   value={formData.message}
