@@ -564,8 +564,8 @@ export const clinicSettingsSchema = {
     },
 
     // --- Contact & Location Info ---
-    { name: 'phone', title: 'Display Phone', type: 'string' },
-    { name: 'phoneRaw', title: 'Clickable Phone', type: 'string' },
+    { name: 'phone', title: 'Display Phone', type: 'string', description: 'Leave blank to use the WhatsApp contact number.' },
+    { name: 'phoneRaw', title: 'Clickable Phone', type: 'string', description: 'Include the country code, e.g. +919995290251. Leave blank to use the WhatsApp contact number.' },
     { name: 'email', title: 'Email Address', type: 'string' },
     { name: 'whatsappNumber', title: 'WhatsApp Contact Number', type: 'string' },
     { name: 'whatsappMessage', title: 'WhatsApp Pre-filled Message', type: 'string', initialValue: 'Hi Swastik Healthcare team, I would like to enquire about booking an appointment.' },

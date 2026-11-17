@@ -16,6 +16,11 @@ import {
   SANITY_PROJECT_ID, 
   SANITY_DATASET 
 } from '../lib/sanity';
+import {
+  APPOINTMENT_WHATSAPP_NUMBER,
+  formatPhoneDisplay,
+  toDialableNumber,
+} from '../lib/whatsapp';
 
 interface ClinicContextValue {
   settings: ClinicSettings;
@@ -54,12 +59,12 @@ const defaultStatus: SanityStatus = {
 const EMPTY_CLINIC_SETTINGS: ClinicSettings = {
   name: '',
   tagline: '',
-  phone: '',
-  phoneRaw: '',
+  phone: formatPhoneDisplay(APPOINTMENT_WHATSAPP_NUMBER),
+  phoneRaw: toDialableNumber(APPOINTMENT_WHATSAPP_NUMBER),
   email: '',
   address: { street: '', suburb: '', city: '', state: '', postcode: '', full: '' },
   openingHours: [],
-  whatsappNumber: '',
+  whatsappNumber: APPOINTMENT_WHATSAPP_NUMBER,
   whatsappMessage: '',
   howItWorks: [],
 };

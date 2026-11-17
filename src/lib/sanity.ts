@@ -10,6 +10,11 @@ import {
   ClinicLocationItem,
   CustomPage
 } from '../types/clinic';
+import {
+  APPOINTMENT_WHATSAPP_NUMBER,
+  formatPhoneDisplay,
+  toDialableNumber,
+} from './whatsapp';
 
 // Sanity Project Configuration
 export const SANITY_PROJECT_ID = import.meta.env.VITE_SANITY_PROJECT_ID || '41uk25bi';
@@ -54,12 +59,14 @@ export interface SanityStatus {
 const EMPTY_CLINIC_SETTINGS: ClinicSettings = {
   name: '',
   tagline: '',
-  phone: '',
-  phoneRaw: '',
+  // The clinic phone is the same number that receives WhatsApp requests, so
+  // call links stay available even while content loads or Sanity is unreachable.
+  phone: formatPhoneDisplay(APPOINTMENT_WHATSAPP_NUMBER),
+  phoneRaw: toDialableNumber(APPOINTMENT_WHATSAPP_NUMBER),
   email: '',
   address: { street: '', suburb: '', city: '', state: '', postcode: '', full: '' },
   openingHours: [],
-  whatsappNumber: '',
+  whatsappNumber: APPOINTMENT_WHATSAPP_NUMBER,
   whatsappMessage: '',
   howItWorks: [],
   navbarPages: [],
@@ -150,8 +157,15 @@ export async function fetchSanityClinicData() {
       result.status.isUsingFallback = false;
 
       if (sanitySettings) {
+        const whatsappNumber =
+          (sanitySettings.whatsappNumber || '').trim() || APPOINTMENT_WHATSAPP_NUMBER;
+
         result.settings = {
           ...sanitySettings,
+          // Fall back to the WhatsApp number when the dedicated phone fields are empty.
+          phone: (sanitySettings.phone || '').trim() || formatPhoneDisplay(whatsappNumber),
+          phoneRaw: (sanitySettings.phoneRaw || '').trim() || toDialableNumber(whatsappNumber),
+          whatsappNumber,
           heroBgImage: sanitySettings.heroBgImage?.asset
             ? urlFor(sanitySettings.heroBgImage).auto('format').width(1800).url()
             : undefined,
